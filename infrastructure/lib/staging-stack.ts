@@ -164,7 +164,13 @@ export class StagingStack extends cdk.Stack {
 
     // ── Backend Container ───────────────────────────────────────
     // MONGO_URI uses localhost because MongoDB runs as a sidecar
-    // in the same task definition (shared network namespace)
+    // in the same task definition (shared network namespace).
+    // The full connection string is stored in SSM so credentials
+    // are never baked into the image or task definition.
+    const mongoUriParam = ssm.StringParameter.fromSecureStringParameterAttributes(
+      this, "MongoUri", { parameterName: "/tsin/staging/MONGO_URI" }
+    );
+
     const backendContainer = taskDef.addContainer("backend", {
       image: ecs.ContainerImage.fromEcrRepository(repo, "latest"),
       memoryLimitMiB: 1024,
@@ -178,14 +184,14 @@ export class StagingStack extends cdk.Stack {
         NODE_ENV: "staging",
         PORT: "8003",
         AWS_DEFAULT_REGION: "ca-central-1",
-        // MongoDB runs as sidecar — Prisma connects via localhost
-        MONGO_URI: "mongodb://admin:changeme@localhost:27017/tsin_learning?authSource=admin",
         USER_API_URL: "https://zxkbbj3pcy.us-east-1.awsapprunner.com/api",
         AUTH_URL: "https://zxkbbj3pcy.us-east-1.awsapprunner.com",
         FRONTEND_URL: "https://portal.tsin.ca",
         S3_BUCKET: "touchstone-be",
       },
       secrets: {
+        // Prisma reads MONGO_URI from env — injected from SSM at container start
+        MONGO_URI: ecs.Secret.fromSsmParameter(mongoUriParam),
         JWT_SECRET: ecs.Secret.fromSsmParameter(jwtSecret),
         AWS_ACCESS_KEY: ecs.Secret.fromSsmParameter(awsAccessKey),
         AWS_SECRET_KEY: ecs.Secret.fromSsmParameter(awsSecretKey),
