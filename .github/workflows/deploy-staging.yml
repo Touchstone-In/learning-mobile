@@ -1,0 +1,182 @@
+name: Deploy Staging (ECS Fargate)
+
+on:
+  workflow_dispatch:
+    inputs:
+      backend_ref:
+        description: "Backend branch/tag to deploy"
+        required: true
+        default: "learning-mobile-2026"
+  push:
+    branches: [staging]
+    paths:
+      - "infrastructure/**"
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: ca-central-1
+  AWS_PROFILE: learning-account
+  ECR_REPO: tsin-learning-backend-staging
+  ECS_CLUSTER: tsin-learning-staging
+  ECS_SERVICE: tsin-learning-backend-staging
+
+jobs:
+  # ── Build & Push Docker Image ──────────────────────────────────
+  build-and-push:
+    name: Build Docker Image
+    runs-on: ubuntu-latest
+    environment: staging
+    outputs:
+      image_tag: ${{ steps.meta.outputs.image_tag }}
+      ecr_uri: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPO }}
+    steps:
+      - name: Checkout mobile repo (for CDK)
+        uses: actions/checkout@v4
+
+      - name: Checkout backend repo
+        uses: actions/checkout@v4
+        with:
+          repository: Touchstone-In/TSIN2024-LEARNING-BACKEND
+          ref: ${{ inputs.backend_ref || 'learning-mobile-2026' }}
+          token: ${{ secrets.GH_PAT }}
+          path: backend
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Generate image tag
+        id: meta
+        run: |
+          IMAGE_TAG="staging-$(date +%Y%m%d)-${GITHUB_SHA::8}"
+          echo "image_tag=$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+      - name: Build and push Docker image
+        working-directory: backend
+        run: |
+          FULL_IMAGE="${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPO }}:${{ steps.meta.outputs.image_tag }}"
+          docker build -t $FULL_IMAGE .
+          docker tag $FULL_IMAGE "${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPO }}:latest"
+          docker push $FULL_IMAGE
+          docker push "${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPO }}:latest"
+
+      - name: Summary
+        run: |
+          echo "### 🐳 Docker Image Built" >> $GITHUB_STEP_SUMMARY
+          echo "| Field | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| **Image** | \`${{ steps.meta.outputs.image_tag }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Registry** | \`${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPO }}\` |" >> $GITHUB_STEP_SUMMARY
+
+  # ── Deploy Infrastructure + Service ────────────────────────────
+  deploy:
+    name: CDK Deploy & ECS Update
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    environment: staging
+    outputs:
+      alb_url: ${{ steps.get-alb.outputs.alb_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: infrastructure/package-lock.json
+
+      - name: Install CDK dependencies
+        working-directory: infrastructure
+        run: npm ci
+
+      - name: CDK Deploy
+        working-directory: infrastructure
+        run: npx cdk deploy --require-approval never --outputs-file cdk-outputs.json
+
+      - name: Force new ECS deployment
+        run: |
+          aws ecs update-service \
+            --cluster ${{ env.ECS_CLUSTER }} \
+            --service ${{ env.ECS_SERVICE }} \
+            --force-new-deployment \
+            --query 'service.serviceName' --output text
+
+      - name: Wait for service stability
+        run: |
+          echo "⏳ Waiting for ECS service to stabilize..."
+          aws ecs wait services-stable \
+            --cluster ${{ env.ECS_CLUSTER }} \
+            --services ${{ env.ECS_SERVICE }}
+          echo "✅ Service is stable"
+
+      - name: Get ALB URL
+        id: get-alb
+        working-directory: infrastructure
+        run: |
+          ALB_DNS=$(cat cdk-outputs.json | python3 -c "import sys,json; print(json.load(sys.stdin)['TsinLearningStagingStack']['AlbDnsName'])")
+          echo "alb_url=http://$ALB_DNS" >> $GITHUB_OUTPUT
+          echo "### 🚀 Staging Deployed" >> $GITHUB_STEP_SUMMARY
+          echo "| Field | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| **ALB URL** | \`http://$ALB_DNS\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Health** | [Check](http://$ALB_DNS/api/health) |" >> $GITHUB_STEP_SUMMARY
+          echo "| **MongoDB** | Sidecar (EFS-backed) |" >> $GITHUB_STEP_SUMMARY
+
+  # ── Post-deploy Smoke Test ──────────────────────────────────────
+  smoke-test:
+    name: Staging Smoke Test
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Smoke test endpoints
+        env:
+          BASE_URL: ${{ needs.deploy.outputs.alb_url }}
+        run: |
+          PASS=0; FAIL=0; RESULTS=""
+
+          test_endpoint() {
+            local method=$1 url=$2 label=$3
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" -X "$method" "$url" --max-time 10 2>/dev/null || echo "000")
+            if [[ "$STATUS" =~ ^2[0-9][0-9]$ ]]; then
+              RESULTS+="| ✅ | $label | $STATUS |\n"
+              PASS=$((PASS + 1))
+            else
+              RESULTS+="| ❌ | $label | $STATUS |\n"
+              FAIL=$((FAIL + 1))
+            fi
+          }
+
+          test_endpoint GET "$BASE_URL/api/health" "Health Check"
+          test_endpoint GET "$BASE_URL/api/" "API Root"
+
+          echo "### 🧪 Staging Smoke Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "| Status | Endpoint | HTTP |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|----------|------|" >> $GITHUB_STEP_SUMMARY
+          echo -e "$RESULTS" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Passed:** $PASS | **Failed:** $FAIL" >> $GITHUB_STEP_SUMMARY
+
+          if [ $FAIL -gt 0 ]; then
+            echo "::error::$FAIL smoke test(s) failed"
+            exit 1
+          fi
+
