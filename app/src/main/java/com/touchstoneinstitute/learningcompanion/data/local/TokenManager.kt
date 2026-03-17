@@ -17,7 +17,7 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(na
 
 @Singleton
 class TokenManager @Inject constructor(
-    @ApplicationContext private val context: Context
+    @param:ApplicationContext private val context: Context
 ) {
     companion object {
         private val ACCESS_TOKEN_KEY = stringPreferencesKey("access_token")
@@ -30,6 +30,16 @@ class TokenManager @Inject constructor(
 
     suspend fun getAccessTokenSync(): String? {
         return context.dataStore.data.first()[ACCESS_TOKEN_KEY]
+    }
+
+    suspend fun getRefreshTokenSync(): String? {
+        return context.dataStore.data.first()[REFRESH_TOKEN_KEY]
+    }
+
+    suspend fun saveAccessToken(accessToken: String) {
+        context.dataStore.edit { prefs ->
+            prefs[ACCESS_TOKEN_KEY] = accessToken
+        }
     }
 
     suspend fun saveTokens(accessToken: String, refreshToken: String?) {

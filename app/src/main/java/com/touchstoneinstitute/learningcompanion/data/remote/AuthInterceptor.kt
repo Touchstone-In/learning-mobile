@@ -15,8 +15,9 @@ class AuthInterceptor @Inject constructor(
     override fun intercept(chain: Interceptor.Chain): Response {
         val originalRequest = chain.request()
 
-        // Skip auth header for auth service endpoints (login, refresh)
-        if (originalRequest.url.encodedPath.contains("auth/")) {
+        // Skip auth header for auth service endpoints (login, refresh, OTP, etc.)
+        val path = originalRequest.url.encodedPath
+        if (path.contains("auth/")) {
             return chain.proceed(originalRequest)
         }
 

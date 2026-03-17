@@ -16,7 +16,15 @@ data class LoginUiState(
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
     val isLoggedIn: Boolean = false,
-    val isCheckingSession: Boolean = true
+    val isCheckingSession: Boolean = true,
+    /** Set when the auth service requires MFA before issuing tokens. */
+    val requiresMfa: Boolean = false,
+    /** "App" for TOTP authenticator, "Email" for email-based OTP. */
+    val mfaMethod: String? = null,
+    /** The email used in the login attempt — needed to verify OTP. */
+    val mfaEmail: String? = null,
+    /** Set when login succeeded but the user has not configured MFA in the web portal. */
+    val mfaSetupRequired: Boolean = false
 )
 
 @HiltViewModel
@@ -42,7 +50,7 @@ class LoginViewModel @Inject constructor(
                     is AuthResult.Success -> {
                         _uiState.update { it.copy(isCheckingSession = false, isLoggedIn = true) }
                     }
-                    is AuthResult.Error -> {
+                    is AuthResult.Error, is AuthResult.MfaSetupRequired -> {
                         _uiState.update { it.copy(isCheckingSession = false) }
                     }
                 }
@@ -58,7 +66,24 @@ class LoginViewModel @Inject constructor(
 
             when (val result = authRepository.login(email, password)) {
                 is AuthResult.Success -> {
-                    _uiState.update { it.copy(isLoading = false, isLoggedIn = true) }
+                    val response = result.data
+                    if (response.requiresMfa == true) {
+                        _uiState.update {
+                            it.copy(
+                                isLoading = false,
+                                requiresMfa = true,
+                                mfaMethod = response.mfaMethod,
+                                mfaEmail = email.trim().lowercase()
+                            )
+                        }
+                    } else {
+                        _uiState.update { it.copy(isLoading = false, isLoggedIn = true) }
+                    }
+                }
+                is AuthResult.MfaSetupRequired -> {
+                    _uiState.update {
+                        it.copy(isLoading = false, mfaSetupRequired = true)
+                    }
                 }
                 is AuthResult.Error -> {
                     _uiState.update {
@@ -67,6 +92,25 @@ class LoginViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    /** Called after MFA verification succeeds — resets MFA state and marks logged in. */
+    fun onMfaVerified() {
+        _uiState.update {
+            it.copy(requiresMfa = false, mfaMethod = null, mfaEmail = null, isLoggedIn = true)
+        }
+    }
+
+    /** Called when user presses back from MFA screen — returns to login form. */
+    fun resetMfaState() {
+        _uiState.update {
+            it.copy(requiresMfa = false, mfaMethod = null, mfaEmail = null)
+        }
+    }
+
+    /** Called when user dismisses the MFA setup required message — returns to login form. */
+    fun dismissMfaSetup() {
+        _uiState.update { it.copy(mfaSetupRequired = false) }
     }
 
     fun clearError() {

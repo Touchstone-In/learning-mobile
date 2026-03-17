@@ -9,15 +9,65 @@ data class LoginRequest(
 
 /**
  * Response from the auth service (userBaseUrl/auth/authenticate-profiile).
- * The external auth service returns token, refreshToken, id, email, role, user.
+ * When MFA is required, token will be null and requiresMfa will be true.
+ * When MFA is not required, token will be present.
  */
 data class LoginResponse(
-    val token: String,
+    val success: Boolean? = null,
+    val token: String? = null,
     val refreshToken: String? = null,
     val id: String? = null,
     val email: String? = null,
     val role: String? = null,
-    val user: UserDto? = null
+    /** Auth service user object — includes isOtpEnabled / otpMeans. */
+    val user: AuthUserDto? = null,
+    val requiresMfa: Boolean? = null,
+    val mfaMethod: String? = null,
+    val skipValidation: Boolean? = null
+)
+
+/** User object returned by the auth service in login / OTP responses. */
+data class AuthUserDto(
+    val id: String? = null,
+    val email: String? = null,
+    val profiles: List<ProfileDto>? = null,
+    val isOtpEnabled: Boolean? = null,
+    val otpMeans: String? = null
+)
+
+// ── Token Refresh ───────────────────────────────────────────────────
+
+data class RefreshTokenRequest(
+    val refreshToken: String
+)
+
+data class RefreshTokenResponse(
+    val accessToken: String
+)
+
+// ── MFA / OTP Verification ──────────────────────────────────────────
+
+data class VerifyOtpRequest(
+    val email: String,
+    val token: String
+)
+
+/**
+ * Response returned by validate-otp / confirm-email-2fa.
+ * Same shape as a successful LoginResult from the auth service.
+ */
+data class MfaVerificationResponse(
+    val success: Boolean? = null,
+    val token: String? = null,
+    val refreshToken: String? = null,
+    val expiresIn: Int? = null,
+    val user: AuthUserDto? = null
+)
+
+data class ProfileDto(
+    val id: String? = null,
+    val role: String? = null,
+    val project: String? = null
 )
 
 /**

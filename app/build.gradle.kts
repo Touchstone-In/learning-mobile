@@ -1,6 +1,5 @@
 ﻿plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.ksp)
@@ -45,8 +44,8 @@ android {
         create("staging") {
             initWith(getByName("debug"))
             isDebuggable = true
-            // Points to the ECS Fargate ALB -- update after CDK deploy with actual DNS
-            buildConfigField("String", "API_BASE_URL", "\"http://tsin-learning-staging-alb.ca-central-1.elb.amazonaws.com/api/\"")
+            // Use same backend as debug for now — update after CDK deploy with actual DNS
+            buildConfigField("String", "API_BASE_URL", "\"https://learndev-be.tsin.ca/api/\"")
             buildConfigField("String", "AUTH_BASE_URL", "\"https://zxkbbj3pcy.us-east-1.awsapprunner.com/api/\"")
             matchingFallbacks += listOf("debug")
         }
@@ -67,10 +66,6 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
-    }
-
-    kotlinOptions {
-        jvmTarget = "17"
     }
 
     buildFeatures {

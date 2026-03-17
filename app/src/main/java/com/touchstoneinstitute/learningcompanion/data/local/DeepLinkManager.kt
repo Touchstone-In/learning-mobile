@@ -21,7 +21,7 @@ private val Context.deepLinkDataStore: DataStore<Preferences> by preferencesData
  */
 @Singleton
 class DeepLinkManager @Inject constructor(
-    @ApplicationContext private val context: Context
+    @param:ApplicationContext private val context: Context
 ) {
     companion object {
         private val PENDING_SCREEN_KEY = stringPreferencesKey("pending_target_screen")

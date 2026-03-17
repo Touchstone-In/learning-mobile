@@ -51,6 +51,11 @@ class HomeViewModel @Inject constructor(
                         it.copy(isLoading = false, errorMessage = result.message)
                     }
                 }
+                is AuthResult.MfaSetupRequired -> {
+                    _uiState.update {
+                        it.copy(isLoading = false, errorMessage = "MFA setup required")
+                    }
+                }
             }
         }
     }

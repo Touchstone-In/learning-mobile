@@ -2,6 +2,7 @@ package com.touchstoneinstitute.learningcompanion.di
 
 import com.touchstoneinstitute.learningcompanion.BuildConfig
 import com.touchstoneinstitute.learningcompanion.data.remote.AuthInterceptor
+import com.touchstoneinstitute.learningcompanion.data.remote.TokenAuthenticator
 import com.touchstoneinstitute.learningcompanion.data.remote.api.AuthApi
 import com.touchstoneinstitute.learningcompanion.data.remote.api.MobileApi
 import com.touchstoneinstitute.learningcompanion.data.remote.api.UserApi
@@ -31,9 +32,13 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(authInterceptor: AuthInterceptor): OkHttpClient {
+    fun provideOkHttpClient(
+        authInterceptor: AuthInterceptor,
+        tokenAuthenticator: TokenAuthenticator
+    ): OkHttpClient {
         val builder = OkHttpClient.Builder()
             .addInterceptor(authInterceptor)
+            .authenticator(tokenAuthenticator)
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
             .writeTimeout(30, TimeUnit.SECONDS)
