@@ -8,6 +8,15 @@
 		},
 		{
 			"path": "."
+		},
+		{
+			"path": "../auth-ui"
+		},
+		{
+			"path": "../auth"
+		},
+		{
+			"path": "../mmi-stage"
 		}
 	]
 }

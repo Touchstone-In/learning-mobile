@@ -1,0 +1,21 @@
+{
+  "version": "52.0.0",
+  "files": {
+    "25b7c4e11a781d32171a881b95ee13090a4362655ad959a37d5969073fcb5895": {
+      "displayName": "TsinLearningStagingStack Template",
+      "source": {
+        "path": "TsinLearningStagingStack.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "339713160237-ca-central-1-fac93db9": {
+          "bucketName": "cdk-hnb659fds-assets-339713160237-ca-central-1",
+          "objectKey": "25b7c4e11a781d32171a881b95ee13090a4362655ad959a37d5969073fcb5895.json",
+          "region": "ca-central-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::339713160237:role/cdk-hnb659fds-file-publishing-role-339713160237-ca-central-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

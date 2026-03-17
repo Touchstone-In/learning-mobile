@@ -16,14 +16,10 @@ export class StagingStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    // ── ECR Repository ──────────────────────────────────────────
-    const repo = new ecr.Repository(this, "LearningBackendRepo", {
-      repositoryName: "tsin-learning-backend-staging",
-      removalPolicy: cdk.RemovalPolicy.RETAIN,
-      lifecycleRules: [
-        { maxImageCount: 10, description: "Keep last 10 images" },
-      ],
-    });
+    // ── ECR Repository (import existing) ─────────────────────────
+    const repo = ecr.Repository.fromRepositoryName(
+      this, "LearningBackendRepo", "tsin-learning-backend-staging"
+    );
 
     // ── VPC ─────────────────────────────────────────────────────
     const vpc = new ec2.Vpc(this, "StagingVpc", {
@@ -113,13 +109,13 @@ export class StagingStack extends cdk.Stack {
     const backendLogGroup = new logs.LogGroup(this, "BackendLogs", {
       logGroupName: "/ecs/tsin-learning-staging/backend",
       retention: logs.RetentionDays.TWO_WEEKS,
-      removalPolicy: cdk.RemovalPolicy.DESTROY,
+      removalPolicy: cdk.RemovalPolicy.RETAIN,
     });
 
     const mongoLogGroup = new logs.LogGroup(this, "MongoLogs", {
       logGroupName: "/ecs/tsin-learning-staging/mongodb",
       retention: logs.RetentionDays.TWO_WEEKS,
-      removalPolicy: cdk.RemovalPolicy.DESTROY,
+      removalPolicy: cdk.RemovalPolicy.RETAIN,
     });
 
     // ── MongoDB Sidecar Container ───────────────────────────────

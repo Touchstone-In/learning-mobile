@@ -1,0 +1,1507 @@
+{
+ "Description": "TSIN Learning Backend - Staging Environment (ECS Fargate + ALB)",
+ "Resources": {
+  "StagingVpcFE1BE17E": {
+   "Type": "AWS::EC2::VPC",
+   "Properties": {
+    "CidrBlock": "10.0.0.0/16",
+    "EnableDnsHostnames": true,
+    "EnableDnsSupport": true,
+    "InstanceTenancy": "default",
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "TsinLearningStagingStack/StagingVpc"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "TsinLearningStagingStack/StagingVpc/Resource"
+   }
+  },
+  "StagingVpcPublicSubnet1SubnetA8A7EB38": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": "ca-central-1a",
+    "CidrBlock": "10.0.0.0/24",
+    "MapPublicIpOnLaunch": true,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "Public"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Public"
+     },
+     {
+      "Key": "Name",
+      "Value": "TsinLearningStagingStack/StagingVpc/PublicSubnet1"
+     }
+    ],
+    "VpcId": {
+     "Ref": "StagingVpcFE1BE17E"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TsinLearningStagingStack/StagingVpc/PublicSubnet1/Subnet"
+   }
+  },
+  "StagingVpcPublicSubnet1RouteTable4D7BB0EF": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "TsinLearningStagingStack/StagingVpc/PublicSubnet1"
+     }
+    ],
+    "VpcId": {
+     "Ref": "StagingVpcFE1BE17E"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TsinLearningStagingStack/StagingVpc/PublicSubnet1/RouteTable"
+   }
+  },
+  "StagingVpcPublicSubnet1RouteTableAssociation805B41D4": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "StagingVpcPublicSubnet1RouteTable4D7BB0EF"
+    },
+    "SubnetId": {
+     "Ref": "StagingVpcPublicSubnet1SubnetA8A7EB38"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TsinLearningStagingStack/StagingVpc/PublicSubnet1/RouteTableAssociation"
+   }
+  },
+  "StagingVpcPublicSubnet1DefaultRoute41025E77": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "GatewayId": {
+     "Ref": "StagingVpcIGW56D5C162"
+    },
+    "RouteTableId": {
+     "Ref": "StagingVpcPublicSubnet1RouteTable4D7BB0EF"
+    }
+   },
+   "DependsOn": [
+    "StagingVpcVPCGWFBBE476D"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "TsinLearningStagingStack/StagingVpc/PublicSubnet1/DefaultRoute"
+   }
+  },
+  "StagingVpcPublicSubnet1EIPCE0D47E1": {
+   "Type": "AWS::EC2::EIP",
+   "Properties": {
+    "Domain": "vpc",
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "TsinLearningStagingStack/StagingVpc/PublicSubnet1"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "TsinLearningStagingStack/StagingVpc/PublicSubnet1/EIP"
+   }
+  },
+  "StagingVpcPublicSubnet1NATGatewayCD437019": {
+   "Type": "AWS::EC2::NatGateway",
+   "Properties": {
+    "AllocationId": {
+     "Fn::GetAtt": [
+      "StagingVpcPublicSubnet1EIPCE0D47E1",
+      "AllocationId"
+     ]
+    },
+    "SubnetId": {
+     "Ref": "StagingVpcPublicSubnet1SubnetA8A7EB38"
+    },
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "TsinLearningStagingStack/StagingVpc/PublicSubnet1"
+     }
+    ]
+   },
+   "DependsOn": [
+    "StagingVpcPublicSubnet1DefaultRoute41025E77",
+    "StagingVpcPublicSubnet1RouteTableAssociation805B41D4"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "TsinLearningStagingStack/StagingVpc/PublicSubnet1/NATGateway"
+   }
+  },
+  "StagingVpcPublicSubnet2Subnet6D8497AB": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": "ca-central-1b",
+    "CidrBlock": "10.0.1.0/24",
+    "MapPublicIpOnLaunch": true,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "Public"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Public"
+     },
+     {
+      "Key": "Name",
+      "Value": "TsinLearningStagingStack/StagingVpc/PublicSubnet2"
+     }
+    ],
+    "VpcId": {
+     "Ref": "StagingVpcFE1BE17E"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TsinLearningStagingStack/StagingVpc/PublicSubnet2/Subnet"
+   }
+  },
+  "StagingVpcPublicSubnet2RouteTable5E8EE010": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "TsinLearningStagingStack/StagingVpc/PublicSubnet2"
+     }
+    ],
+    "VpcId": {
+     "Ref": "StagingVpcFE1BE17E"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TsinLearningStagingStack/StagingVpc/PublicSubnet2/RouteTable"
+   }
+  },
+  "StagingVpcPublicSubnet2RouteTableAssociationD71BA708": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "StagingVpcPublicSubnet2RouteTable5E8EE010"
+    },
+    "SubnetId": {
+     "Ref": "StagingVpcPublicSubnet2Subnet6D8497AB"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TsinLearningStagingStack/StagingVpc/PublicSubnet2/RouteTableAssociation"
+   }
+  },
+  "StagingVpcPublicSubnet2DefaultRoute711646FE": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "GatewayId": {
+     "Ref": "StagingVpcIGW56D5C162"
+    },
+    "RouteTableId": {
+     "Ref": "StagingVpcPublicSubnet2RouteTable5E8EE010"
+    }
+   },
+   "DependsOn": [
+    "StagingVpcVPCGWFBBE476D"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "TsinLearningStagingStack/StagingVpc/PublicSubnet2/DefaultRoute"
+   }
+  },
+  "StagingVpcPrivateSubnet1SubnetCFAB58AC": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": "ca-central-1a",
+    "CidrBlock": "10.0.2.0/24",
+    "MapPublicIpOnLaunch": false,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "Private"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Private"
+     },
+     {
+      "Key": "Name",
+      "Value": "TsinLearningStagingStack/StagingVpc/PrivateSubnet1"
+     }
+    ],
+    "VpcId": {
+     "Ref": "StagingVpcFE1BE17E"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TsinLearningStagingStack/StagingVpc/PrivateSubnet1/Subnet"
+   }
+  },
+  "StagingVpcPrivateSubnet1RouteTableABDCBAA0": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "TsinLearningStagingStack/StagingVpc/PrivateSubnet1"
+     }
+    ],
+    "VpcId": {
+     "Ref": "StagingVpcFE1BE17E"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TsinLearningStagingStack/StagingVpc/PrivateSubnet1/RouteTable"
+   }
+  },
+  "StagingVpcPrivateSubnet1RouteTableAssociation78EAAEE0": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "StagingVpcPrivateSubnet1RouteTableABDCBAA0"
+    },
+    "SubnetId": {
+     "Ref": "StagingVpcPrivateSubnet1SubnetCFAB58AC"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TsinLearningStagingStack/StagingVpc/PrivateSubnet1/RouteTableAssociation"
+   }
+  },
+  "StagingVpcPrivateSubnet1DefaultRouteD18B7ED3": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "NatGatewayId": {
+     "Ref": "StagingVpcPublicSubnet1NATGatewayCD437019"
+    },
+    "RouteTableId": {
+     "Ref": "StagingVpcPrivateSubnet1RouteTableABDCBAA0"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TsinLearningStagingStack/StagingVpc/PrivateSubnet1/DefaultRoute"
+   }
+  },
+  "StagingVpcPrivateSubnet2Subnet298E9A5A": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": "ca-central-1b",
+    "CidrBlock": "10.0.3.0/24",
+    "MapPublicIpOnLaunch": false,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "Private"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Private"
+     },
+     {
+      "Key": "Name",
+      "Value": "TsinLearningStagingStack/StagingVpc/PrivateSubnet2"
+     }
+    ],
+    "VpcId": {
+     "Ref": "StagingVpcFE1BE17E"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TsinLearningStagingStack/StagingVpc/PrivateSubnet2/Subnet"
+   }
+  },
+  "StagingVpcPrivateSubnet2RouteTable2F568731": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "TsinLearningStagingStack/StagingVpc/PrivateSubnet2"
+     }
+    ],
+    "VpcId": {
+     "Ref": "StagingVpcFE1BE17E"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TsinLearningStagingStack/StagingVpc/PrivateSubnet2/RouteTable"
+   }
+  },
+  "StagingVpcPrivateSubnet2RouteTableAssociation9A4D94E2": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "StagingVpcPrivateSubnet2RouteTable2F568731"
+    },
+    "SubnetId": {
+     "Ref": "StagingVpcPrivateSubnet2Subnet298E9A5A"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TsinLearningStagingStack/StagingVpc/PrivateSubnet2/RouteTableAssociation"
+   }
+  },
+  "StagingVpcPrivateSubnet2DefaultRoute4776CAB2": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "NatGatewayId": {
+     "Ref": "StagingVpcPublicSubnet1NATGatewayCD437019"
+    },
+    "RouteTableId": {
+     "Ref": "StagingVpcPrivateSubnet2RouteTable2F568731"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TsinLearningStagingStack/StagingVpc/PrivateSubnet2/DefaultRoute"
+   }
+  },
+  "StagingVpcIGW56D5C162": {
+   "Type": "AWS::EC2::InternetGateway",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "TsinLearningStagingStack/StagingVpc"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "TsinLearningStagingStack/StagingVpc/IGW"
+   }
+  },
+  "StagingVpcVPCGWFBBE476D": {
+   "Type": "AWS::EC2::VPCGatewayAttachment",
+   "Properties": {
+    "InternetGatewayId": {
+     "Ref": "StagingVpcIGW56D5C162"
+    },
+    "VpcId": {
+     "Ref": "StagingVpcFE1BE17E"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TsinLearningStagingStack/StagingVpc/VPCGW"
+   }
+  },
+  "MongoEfs96E682F3": {
+   "Type": "AWS::EFS::FileSystem",
+   "Properties": {
+    "Encrypted": true,
+    "FileSystemTags": [
+     {
+      "Key": "Name",
+      "Value": "TsinLearningStagingStack/MongoEfs"
+     }
+    ],
+    "LifecyclePolicies": [
+     {
+      "TransitionToIA": "AFTER_30_DAYS"
+     }
+    ],
+    "PerformanceMode": "generalPurpose"
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "TsinLearningStagingStack/MongoEfs/Resource"
+   }
+  },
+  "MongoEfsEfsSecurityGroup61038247": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "GroupDescription": "TsinLearningStagingStack/MongoEfs/EfsSecurityGroup",
+    "SecurityGroupEgress": [
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "Allow all outbound traffic by default",
+      "IpProtocol": "-1"
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "TsinLearningStagingStack/MongoEfs"
+     }
+    ],
+    "VpcId": {
+     "Ref": "StagingVpcFE1BE17E"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TsinLearningStagingStack/MongoEfs/EfsSecurityGroup/Resource"
+   }
+  },
+  "MongoEfsEfsSecurityGroupfromTsinLearningStagingStackServiceSgB3CA98F32049CCE78B90": {
+   "Type": "AWS::EC2::SecurityGroupIngress",
+   "Properties": {
+    "Description": "EFS from Fargate",
+    "FromPort": 2049,
+    "GroupId": {
+     "Fn::GetAtt": [
+      "MongoEfsEfsSecurityGroup61038247",
+      "GroupId"
+     ]
+    },
+    "IpProtocol": "tcp",
+    "SourceSecurityGroupId": {
+     "Fn::GetAtt": [
+      "ServiceSg2632F788",
+      "GroupId"
+     ]
+    },
+    "ToPort": 2049
+   },
+   "Metadata": {
+    "aws:cdk:path": "TsinLearningStagingStack/MongoEfs/EfsSecurityGroup/from TsinLearningStagingStackServiceSgB3CA98F3:2049"
+   }
+  },
+  "MongoEfsEfsMountTarget13E68892B": {
+   "Type": "AWS::EFS::MountTarget",
+   "Properties": {
+    "FileSystemId": {
+     "Ref": "MongoEfs96E682F3"
+    },
+    "SecurityGroups": [
+     {
+      "Fn::GetAtt": [
+       "MongoEfsEfsSecurityGroup61038247",
+       "GroupId"
+      ]
+     }
+    ],
+    "SubnetId": {
+     "Ref": "StagingVpcPrivateSubnet1SubnetCFAB58AC"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TsinLearningStagingStack/MongoEfs/EfsMountTarget1"
+   }
+  },
+  "MongoEfsEfsMountTarget2E418B604": {
+   "Type": "AWS::EFS::MountTarget",
+   "Properties": {
+    "FileSystemId": {
+     "Ref": "MongoEfs96E682F3"
+    },
+    "SecurityGroups": [
+     {
+      "Fn::GetAtt": [
+       "MongoEfsEfsSecurityGroup61038247",
+       "GroupId"
+      ]
+     }
+    ],
+    "SubnetId": {
+     "Ref": "StagingVpcPrivateSubnet2Subnet298E9A5A"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TsinLearningStagingStack/MongoEfs/EfsMountTarget2"
+   }
+  },
+  "MongoEfsMongoData45B8F41C": {
+   "Type": "AWS::EFS::AccessPoint",
+   "Properties": {
+    "AccessPointTags": [
+     {
+      "Key": "Name",
+      "Value": "TsinLearningStagingStack/MongoEfs/MongoData"
+     }
+    ],
+    "FileSystemId": {
+     "Ref": "MongoEfs96E682F3"
+    },
+    "PosixUser": {
+     "Gid": "999",
+     "Uid": "999"
+    },
+    "RootDirectory": {
+     "CreationInfo": {
+      "OwnerGid": "999",
+      "OwnerUid": "999",
+      "Permissions": "755"
+     },
+     "Path": "/mongodata"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TsinLearningStagingStack/MongoEfs/MongoData/Resource"
+   }
+  },
+  "StagingClusterD0FDCA09": {
+   "Type": "AWS::ECS::Cluster",
+   "Properties": {
+    "ClusterName": "tsin-learning-staging",
+    "ClusterSettings": [
+     {
+      "Name": "containerInsights",
+      "Value": "enabled"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "TsinLearningStagingStack/StagingCluster/Resource"
+   }
+  },
+  "BackendTaskDefTaskRoleBA953A3B": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "ecs-tasks.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TsinLearningStagingStack/BackendTaskDef/TaskRole/Resource"
+   }
+  },
+  "BackendTaskDefTaskRoleDefaultPolicy2C657A56": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "elasticfilesystem:ClientMount",
+        "elasticfilesystem:ClientWrite",
+        "elasticfilesystem:ClientRootAccess"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "MongoEfs96E682F3",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "BackendTaskDefTaskRoleDefaultPolicy2C657A56",
+    "Roles": [
+     {
+      "Ref": "BackendTaskDefTaskRoleBA953A3B"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "TsinLearningStagingStack/BackendTaskDef/TaskRole/DefaultPolicy/Resource"
+   }
+  },
+  "BackendTaskDef6ECE986E": {
+   "Type": "AWS::ECS::TaskDefinition",
+   "Properties": {
+    "ContainerDefinitions": [
+     {
+      "Cpu": 256,
+      "Environment": [
+       {
+        "Name": "MONGO_INITDB_DATABASE",
+        "Value": "tsin_learning"
+       }
+      ],
+      "Essential": true,
+      "HealthCheck": {
+       "Command": [
+        "CMD-SHELL",
+        "mongosh --eval 'db.adminCommand(\"ping\")' --quiet || exit 1"
+       ],
+       "Interval": 30,
+       "Retries": 5,
+       "StartPeriod": 40,
+       "Timeout": 10
+      },
+      "Image": "mongo:7",
+      "LogConfiguration": {
+       "LogDriver": "awslogs",
+       "Options": {
+        "awslogs-group": {
+         "Ref": "MongoLogs79D080CB"
+        },
+        "awslogs-stream-prefix": "mongodb",
+        "awslogs-region": "ca-central-1"
+       }
+      },
+      "Memory": 768,
+      "MountPoints": [
+       {
+        "ContainerPath": "/data/db",
+        "ReadOnly": false,
+        "SourceVolume": "mongo-data"
+       }
+      ],
+      "Name": "mongodb",
+      "PortMappings": [
+       {
+        "ContainerPort": 27017,
+        "Protocol": "tcp"
+       }
+      ],
+      "Secrets": [
+       {
+        "Name": "MONGO_INITDB_ROOT_USERNAME",
+        "ValueFrom": {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":ssm:ca-central-1:339713160237:parameter/tsin/staging/MONGO_ROOT_USERNAME"
+          ]
+         ]
+        }
+       },
+       {
+        "Name": "MONGO_INITDB_ROOT_PASSWORD",
+        "ValueFrom": {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":ssm:ca-central-1:339713160237:parameter/tsin/staging/MONGO_ROOT_PASSWORD"
+          ]
+         ]
+        }
+       }
+      ]
+     },
+     {
+      "Cpu": 512,
+      "DependsOn": [
+       {
+        "Condition": "HEALTHY",
+        "ContainerName": "mongodb"
+       }
+      ],
+      "Environment": [
+       {
+        "Name": "NODE_ENV",
+        "Value": "staging"
+       },
+       {
+        "Name": "PORT",
+        "Value": "8003"
+       },
+       {
+        "Name": "AWS_DEFAULT_REGION",
+        "Value": "ca-central-1"
+       },
+       {
+        "Name": "USER_API_URL",
+        "Value": "https://zxkbbj3pcy.us-east-1.awsapprunner.com/api"
+       },
+       {
+        "Name": "AUTH_URL",
+        "Value": "https://zxkbbj3pcy.us-east-1.awsapprunner.com"
+       },
+       {
+        "Name": "FRONTEND_URL",
+        "Value": "https://portal.tsin.ca"
+       },
+       {
+        "Name": "S3_BUCKET",
+        "Value": "touchstone-be"
+       }
+      ],
+      "Essential": true,
+      "HealthCheck": {
+       "Command": [
+        "CMD-SHELL",
+        "wget -qO- http://localhost:8003/api/health || exit 1"
+       ],
+       "Interval": 30,
+       "Retries": 3,
+       "StartPeriod": 60,
+       "Timeout": 5
+      },
+      "Image": {
+       "Fn::Join": [
+        "",
+        [
+         "339713160237.dkr.ecr.ca-central-1.",
+         {
+          "Ref": "AWS::URLSuffix"
+         },
+         "/tsin-learning-backend-staging:latest"
+        ]
+       ]
+      },
+      "LogConfiguration": {
+       "LogDriver": "awslogs",
+       "Options": {
+        "awslogs-group": {
+         "Ref": "BackendLogs21FC23BC"
+        },
+        "awslogs-stream-prefix": "backend",
+        "awslogs-region": "ca-central-1"
+       }
+      },
+      "Memory": 1024,
+      "Name": "backend",
+      "PortMappings": [
+       {
+        "ContainerPort": 8003,
+        "Protocol": "tcp"
+       }
+      ],
+      "Secrets": [
+       {
+        "Name": "MONGO_URI",
+        "ValueFrom": {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":ssm:ca-central-1:339713160237:parameter/tsin/staging/MONGO_URI"
+          ]
+         ]
+        }
+       },
+       {
+        "Name": "JWT_SECRET",
+        "ValueFrom": {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":ssm:ca-central-1:339713160237:parameter/tsin/staging/JWT_SECRET"
+          ]
+         ]
+        }
+       },
+       {
+        "Name": "AWS_ACCESS_KEY",
+        "ValueFrom": {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":ssm:ca-central-1:339713160237:parameter/tsin/staging/AWS_ACCESS_KEY"
+          ]
+         ]
+        }
+       },
+       {
+        "Name": "AWS_SECRET_KEY",
+        "ValueFrom": {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":ssm:ca-central-1:339713160237:parameter/tsin/staging/AWS_SECRET_KEY"
+          ]
+         ]
+        }
+       }
+      ]
+     }
+    ],
+    "Cpu": "1024",
+    "ExecutionRoleArn": {
+     "Fn::GetAtt": [
+      "BackendTaskDefExecutionRoleC5A001DB",
+      "Arn"
+     ]
+    },
+    "Family": "TsinLearningStagingStackBackendTaskDef7236FB5D",
+    "Memory": "2048",
+    "NetworkMode": "awsvpc",
+    "RequiresCompatibilities": [
+     "FARGATE"
+    ],
+    "RuntimePlatform": {
+     "CpuArchitecture": "X86_64",
+     "OperatingSystemFamily": "LINUX"
+    },
+    "TaskRoleArn": {
+     "Fn::GetAtt": [
+      "BackendTaskDefTaskRoleBA953A3B",
+      "Arn"
+     ]
+    },
+    "Volumes": [
+     {
+      "EFSVolumeConfiguration": {
+       "AuthorizationConfig": {
+        "AccessPointId": {
+         "Ref": "MongoEfsMongoData45B8F41C"
+        },
+        "IAM": "ENABLED"
+       },
+       "FilesystemId": {
+        "Ref": "MongoEfs96E682F3"
+       },
+       "TransitEncryption": "ENABLED"
+      },
+      "Name": "mongo-data"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "TsinLearningStagingStack/BackendTaskDef/Resource"
+   }
+  },
+  "BackendTaskDefExecutionRoleC5A001DB": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "ecs-tasks.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TsinLearningStagingStack/BackendTaskDef/ExecutionRole/Resource"
+   }
+  },
+  "BackendTaskDefExecutionRoleDefaultPolicyAA625660": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "MongoLogs79D080CB",
+         "Arn"
+        ]
+       }
+      },
+      {
+       "Action": [
+        "ssm:DescribeParameters",
+        "ssm:GetParameters",
+        "ssm:GetParameter",
+        "ssm:GetParameterHistory"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":ssm:ca-central-1:339713160237:parameter/tsin/staging/MONGO_ROOT_USERNAME"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "ssm:DescribeParameters",
+        "ssm:GetParameters",
+        "ssm:GetParameter",
+        "ssm:GetParameterHistory"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":ssm:ca-central-1:339713160237:parameter/tsin/staging/MONGO_ROOT_PASSWORD"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "ecr:BatchCheckLayerAvailability",
+        "ecr:GetDownloadUrlForLayer",
+        "ecr:BatchGetImage"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":ecr:ca-central-1:339713160237:repository/tsin-learning-backend-staging"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": "ecr:GetAuthorizationToken",
+       "Effect": "Allow",
+       "Resource": "*"
+      },
+      {
+       "Action": [
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "BackendLogs21FC23BC",
+         "Arn"
+        ]
+       }
+      },
+      {
+       "Action": [
+        "ssm:DescribeParameters",
+        "ssm:GetParameters",
+        "ssm:GetParameter",
+        "ssm:GetParameterHistory"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":ssm:ca-central-1:339713160237:parameter/tsin/staging/MONGO_URI"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "ssm:DescribeParameters",
+        "ssm:GetParameters",
+        "ssm:GetParameter",
+        "ssm:GetParameterHistory"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":ssm:ca-central-1:339713160237:parameter/tsin/staging/JWT_SECRET"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "ssm:DescribeParameters",
+        "ssm:GetParameters",
+        "ssm:GetParameter",
+        "ssm:GetParameterHistory"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":ssm:ca-central-1:339713160237:parameter/tsin/staging/AWS_ACCESS_KEY"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": [
+        "ssm:DescribeParameters",
+        "ssm:GetParameters",
+        "ssm:GetParameter",
+        "ssm:GetParameterHistory"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":ssm:ca-central-1:339713160237:parameter/tsin/staging/AWS_SECRET_KEY"
+         ]
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "BackendTaskDefExecutionRoleDefaultPolicyAA625660",
+    "Roles": [
+     {
+      "Ref": "BackendTaskDefExecutionRoleC5A001DB"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "TsinLearningStagingStack/BackendTaskDef/ExecutionRole/DefaultPolicy/Resource"
+   }
+  },
+  "BackendLogs21FC23BC": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "LogGroupName": "/ecs/tsin-learning-staging/backend",
+    "RetentionInDays": 14
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "TsinLearningStagingStack/BackendLogs/Resource"
+   }
+  },
+  "MongoLogs79D080CB": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "LogGroupName": "/ecs/tsin-learning-staging/mongodb",
+    "RetentionInDays": 14
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "TsinLearningStagingStack/MongoLogs/Resource"
+   }
+  },
+  "StagingAlb2B5E2283": {
+   "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
+   "Properties": {
+    "LoadBalancerAttributes": [
+     {
+      "Key": "deletion_protection.enabled",
+      "Value": "false"
+     }
+    ],
+    "Name": "tsin-learning-staging-alb",
+    "Scheme": "internet-facing",
+    "SecurityGroups": [
+     {
+      "Fn::GetAtt": [
+       "StagingAlbSecurityGroupC9367C76",
+       "GroupId"
+      ]
+     }
+    ],
+    "Subnets": [
+     {
+      "Ref": "StagingVpcPublicSubnet1SubnetA8A7EB38"
+     },
+     {
+      "Ref": "StagingVpcPublicSubnet2Subnet6D8497AB"
+     }
+    ],
+    "Type": "application"
+   },
+   "DependsOn": [
+    "StagingVpcPublicSubnet1DefaultRoute41025E77",
+    "StagingVpcPublicSubnet1RouteTableAssociation805B41D4",
+    "StagingVpcPublicSubnet2DefaultRoute711646FE",
+    "StagingVpcPublicSubnet2RouteTableAssociationD71BA708"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "TsinLearningStagingStack/StagingAlb/Resource"
+   }
+  },
+  "StagingAlbSecurityGroupC9367C76": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "GroupDescription": "Automatically created Security Group for ELB TsinLearningStagingStackStagingAlb09CE46AB",
+    "SecurityGroupIngress": [
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "Allow from anyone on port 80",
+      "FromPort": 80,
+      "IpProtocol": "tcp",
+      "ToPort": 80
+     }
+    ],
+    "VpcId": {
+     "Ref": "StagingVpcFE1BE17E"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TsinLearningStagingStack/StagingAlb/SecurityGroup/Resource"
+   }
+  },
+  "StagingAlbSecurityGrouptoTsinLearningStagingStackServiceSgB3CA98F32701764A44050": {
+   "Type": "AWS::EC2::SecurityGroupEgress",
+   "Properties": {
+    "Description": "Load balancer to target",
+    "DestinationSecurityGroupId": {
+     "Fn::GetAtt": [
+      "ServiceSg2632F788",
+      "GroupId"
+     ]
+    },
+    "FromPort": 27017,
+    "GroupId": {
+     "Fn::GetAtt": [
+      "StagingAlbSecurityGroupC9367C76",
+      "GroupId"
+     ]
+    },
+    "IpProtocol": "tcp",
+    "ToPort": 27017
+   },
+   "Metadata": {
+    "aws:cdk:path": "TsinLearningStagingStack/StagingAlb/SecurityGroup/to TsinLearningStagingStackServiceSgB3CA98F3:27017"
+   }
+  },
+  "StagingAlbSecurityGrouptoTsinLearningStagingStackServiceSgB3CA98F380035EEE6365": {
+   "Type": "AWS::EC2::SecurityGroupEgress",
+   "Properties": {
+    "Description": "ALB to backend",
+    "DestinationSecurityGroupId": {
+     "Fn::GetAtt": [
+      "ServiceSg2632F788",
+      "GroupId"
+     ]
+    },
+    "FromPort": 8003,
+    "GroupId": {
+     "Fn::GetAtt": [
+      "StagingAlbSecurityGroupC9367C76",
+      "GroupId"
+     ]
+    },
+    "IpProtocol": "tcp",
+    "ToPort": 8003
+   },
+   "Metadata": {
+    "aws:cdk:path": "TsinLearningStagingStack/StagingAlb/SecurityGroup/to TsinLearningStagingStackServiceSgB3CA98F3:8003"
+   }
+  },
+  "StagingAlbHttpListener61CA0ED2": {
+   "Type": "AWS::ElasticLoadBalancingV2::Listener",
+   "Properties": {
+    "DefaultActions": [
+     {
+      "TargetGroupArn": {
+       "Ref": "StagingAlbHttpListenerBackendTargetGroup8504907E"
+      },
+      "Type": "forward"
+     }
+    ],
+    "LoadBalancerArn": {
+     "Ref": "StagingAlb2B5E2283"
+    },
+    "Port": 80,
+    "Protocol": "HTTP"
+   },
+   "Metadata": {
+    "aws:cdk:path": "TsinLearningStagingStack/StagingAlb/HttpListener/Resource"
+   }
+  },
+  "StagingAlbHttpListenerBackendTargetGroup8504907E": {
+   "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
+   "Properties": {
+    "HealthCheckIntervalSeconds": 30,
+    "HealthCheckPath": "/api/health",
+    "HealthCheckTimeoutSeconds": 5,
+    "HealthyThresholdCount": 2,
+    "Port": 8003,
+    "Protocol": "HTTP",
+    "TargetGroupAttributes": [
+     {
+      "Key": "stickiness.enabled",
+      "Value": "false"
+     }
+    ],
+    "TargetType": "ip",
+    "UnhealthyThresholdCount": 3,
+    "VpcId": {
+     "Ref": "StagingVpcFE1BE17E"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TsinLearningStagingStack/StagingAlb/HttpListener/BackendTargetGroup/Resource"
+   }
+  },
+  "ServiceSg2632F788": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "GroupDescription": "Security group for backend + mongodb task",
+    "SecurityGroupEgress": [
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "Allow all outbound traffic by default",
+      "IpProtocol": "-1"
+     }
+    ],
+    "VpcId": {
+     "Ref": "StagingVpcFE1BE17E"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TsinLearningStagingStack/ServiceSg/Resource"
+   }
+  },
+  "ServiceSgfromTsinLearningStagingStackStagingAlbSecurityGroup733F2E4E27017C448137E": {
+   "Type": "AWS::EC2::SecurityGroupIngress",
+   "Properties": {
+    "Description": "Load balancer to target",
+    "FromPort": 27017,
+    "GroupId": {
+     "Fn::GetAtt": [
+      "ServiceSg2632F788",
+      "GroupId"
+     ]
+    },
+    "IpProtocol": "tcp",
+    "SourceSecurityGroupId": {
+     "Fn::GetAtt": [
+      "StagingAlbSecurityGroupC9367C76",
+      "GroupId"
+     ]
+    },
+    "ToPort": 27017
+   },
+   "Metadata": {
+    "aws:cdk:path": "TsinLearningStagingStack/ServiceSg/from TsinLearningStagingStackStagingAlbSecurityGroup733F2E4E:27017"
+   }
+  },
+  "ServiceSgfromTsinLearningStagingStackStagingAlbSecurityGroup733F2E4E800345DC74F4": {
+   "Type": "AWS::EC2::SecurityGroupIngress",
+   "Properties": {
+    "Description": "ALB to backend",
+    "FromPort": 8003,
+    "GroupId": {
+     "Fn::GetAtt": [
+      "ServiceSg2632F788",
+      "GroupId"
+     ]
+    },
+    "IpProtocol": "tcp",
+    "SourceSecurityGroupId": {
+     "Fn::GetAtt": [
+      "StagingAlbSecurityGroupC9367C76",
+      "GroupId"
+     ]
+    },
+    "ToPort": 8003
+   },
+   "Metadata": {
+    "aws:cdk:path": "TsinLearningStagingStack/ServiceSg/from TsinLearningStagingStackStagingAlbSecurityGroup733F2E4E:8003"
+   }
+  },
+  "BackendService7A4224EE": {
+   "Type": "AWS::ECS::Service",
+   "Properties": {
+    "Cluster": {
+     "Ref": "StagingClusterD0FDCA09"
+    },
+    "DeploymentConfiguration": {
+     "Alarms": {
+      "AlarmNames": [],
+      "Enable": false,
+      "Rollback": false
+     },
+     "DeploymentCircuitBreaker": {
+      "Enable": true,
+      "Rollback": true
+     },
+     "MaximumPercent": 200,
+     "MinimumHealthyPercent": 100
+    },
+    "DeploymentController": {
+     "Type": "ECS"
+    },
+    "DesiredCount": 1,
+    "EnableECSManagedTags": false,
+    "HealthCheckGracePeriodSeconds": 60,
+    "LaunchType": "FARGATE",
+    "LoadBalancers": [
+     {
+      "ContainerName": "mongodb",
+      "ContainerPort": 27017,
+      "TargetGroupArn": {
+       "Ref": "StagingAlbHttpListenerBackendTargetGroup8504907E"
+      }
+     }
+    ],
+    "NetworkConfiguration": {
+     "AwsvpcConfiguration": {
+      "AssignPublicIp": "DISABLED",
+      "SecurityGroups": [
+       {
+        "Fn::GetAtt": [
+         "ServiceSg2632F788",
+         "GroupId"
+        ]
+       }
+      ],
+      "Subnets": [
+       {
+        "Ref": "StagingVpcPrivateSubnet1SubnetCFAB58AC"
+       },
+       {
+        "Ref": "StagingVpcPrivateSubnet2Subnet298E9A5A"
+       }
+      ]
+     }
+    },
+    "PlatformVersion": "LATEST",
+    "ServiceName": "tsin-learning-backend-staging",
+    "TaskDefinition": {
+     "Ref": "BackendTaskDef6ECE986E"
+    }
+   },
+   "DependsOn": [
+    "BackendTaskDefTaskRoleDefaultPolicy2C657A56",
+    "BackendTaskDefTaskRoleBA953A3B",
+    "StagingAlbHttpListenerBackendTargetGroup8504907E",
+    "StagingAlbHttpListener61CA0ED2"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "TsinLearningStagingStack/BackendService/Service"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/31R207DMAz9Ft6zAGU/MMZFk7hULeIVuZlXzLKkip1NU9V/R212KSDx5HOOTyL7ONPZ9EZfXcCOJ2a5nliqdFsKmLWCHX+0aIIusPFM4sP+FhgVmky3741R85V7z+cqj5UlU8bKofTaGRU+Cr5BZfGsn7UZszcEQt6dzD24X+R9eQF5BMEd7FUeaAuC548XTjA4PBnSJAc2EwHzuUEnqkQTA8n+MfjYDDP8KyxcHZD5j34/yJ3CFev2gSyWexbc9L6f7NlHJ28QahQ1MwaZc09uGHlEO4WGdTu3kQVD3zzCBwg19PHw+g5X5OgYzm/FOwFyGEba4W2JYUsmBZ5gpwg2ui18OsNQc2/JDLkl1Cnra9btk69P0Rxxp9ACCxnrYVmBBWfI1dtMt7OmsWSGCz55WN4OvbTRDz72EQu6g+eIR/0U3mmGEe06VSD7GNJyr1GaKJ1yfon6iy+32VRfT/XVxRcTTUJ0QhvURarfI2POV+YCAAA="
+   },
+   "Metadata": {
+    "aws:cdk:path": "TsinLearningStagingStack/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "AlbDnsName": {
+   "Description": "Staging ALB DNS name — use as mobile API_BASE_URL",
+   "Value": {
+    "Fn::GetAtt": [
+     "StagingAlb2B5E2283",
+     "DNSName"
+    ]
+   },
+   "Export": {
+    "Name": "TsinLearningStagingAlbDns"
+   }
+  },
+  "EcrRepoUri": {
+   "Description": "ECR repository URI for Docker push",
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "339713160237.dkr.ecr.ca-central-1.",
+      {
+       "Ref": "AWS::URLSuffix"
+      },
+      "/tsin-learning-backend-staging"
+     ]
+    ]
+   },
+   "Export": {
+    "Name": "TsinLearningStagingEcrUri"
+   }
+  },
+  "ClusterName": {
+   "Description": "ECS Cluster name",
+   "Value": {
+    "Ref": "StagingClusterD0FDCA09"
+   }
+  },
+  "ServiceName": {
+   "Description": "ECS Service name",
+   "Value": {
+    "Fn::GetAtt": [
+     "BackendService7A4224EE",
+     "Name"
+    ]
+   }
+  },
+  "MongoEfsId": {
+   "Description": "EFS file system ID for MongoDB data",
+   "Value": {
+    "Ref": "MongoEfs96E682F3"
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

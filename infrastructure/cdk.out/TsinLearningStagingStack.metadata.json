@@ -1,0 +1,359 @@
+{
+  "/TsinLearningStagingStack/ServiceSg": [
+    {
+      "type": "aws:cdk:warning",
+      "data": "Ignoring Egress rule since 'allowAllOutbound' is set to true; To add customized rules, set allowAllOutbound=false on the SecurityGroup [ack: @aws-cdk/aws-ec2:ipv4IgnoreEgressRule]",
+      "trace": [
+        "Annotations.addMessage (C:\\github\\Learning-mobile\\infrastructure\\node_modules\\aws-cdk-lib\\core\\lib\\annotations.js:1:2066)",
+        "Annotations.addWarningV2 (C:\\github\\Learning-mobile\\infrastructure\\node_modules\\aws-cdk-lib\\core\\lib\\annotations.js:1:984)",
+        "WrappedClass.addEgressRule (C:\\github\\Learning-mobile\\infrastructure\\node_modules\\aws-cdk-lib\\aws-ec2\\lib\\security-group.js:1:11164)",
+        "WrappedClass.<anonymous> (C:\\github\\Learning-mobile\\infrastructure\\node_modules\\aws-cdk-lib\\core\\lib\\metadata-resource.js:1:2015)",
+        "C:\\github\\Learning-mobile\\infrastructure\\node_modules\\aws-cdk-lib\\aws-ec2\\lib\\connections.js:1:2011",
+        "ReactiveList.forEachAndForever (C:\\github\\Learning-mobile\\infrastructure\\node_modules\\aws-cdk-lib\\aws-ec2\\lib\\connections.js:1:6094)",
+        "C:\\github\\Learning-mobile\\infrastructure\\node_modules\\aws-cdk-lib\\aws-ec2\\lib\\connections.js:1:1972",
+        "ReactiveList.forEachAndForever (C:\\github\\Learning-mobile\\infrastructure\\node_modules\\aws-cdk-lib\\aws-ec2\\lib\\connections.js:1:6094)",
+        "Connections.allowTo (C:\\github\\Learning-mobile\\infrastructure\\node_modules\\aws-cdk-lib\\aws-ec2\\lib\\connections.js:1:1900)",
+        "Connections.allowToAnyIpv4 (C:\\github\\Learning-mobile\\infrastructure\\node_modules\\aws-cdk-lib\\aws-ec2\\lib\\connections.js:1:3647)",
+        "new StagingStack (C:\\github\\Learning-mobile\\infrastructure\\lib\\staging-stack.ts:266:25)",
+        "Object.<anonymous> (C:\\github\\Learning-mobile\\infrastructure\\bin\\staging-app.ts:8:1)",
+        "Module._compile (node:internal/modules/cjs/loader:1812:14)",
+        "Module.m._compile (C:\\Users\\TemidayoOlogun\\AppData\\Local\\npm-cache\\_npx\\1bf7c3c15bf47d04\\node_modules\\ts-node\\src\\index.ts:1618:23)",
+        "node:internal/modules/cjs/loader:1943:10",
+        "Object.require.extensions.<computed> [as .ts] (C:\\Users\\TemidayoOlogun\\AppData\\Local\\npm-cache\\_npx\\1bf7c3c15bf47d04\\node_modules\\ts-node\\src\\index.ts:1621:12)",
+        "Module.load (node:internal/modules/cjs/loader:1533:32)",
+        "Module._load (node:internal/modules/cjs/loader:1335:12)",
+        "wrapModuleLoad (node:internal/modules/cjs/loader:255:19)",
+        "Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)",
+        "phase4 (C:\\Users\\TemidayoOlogun\\AppData\\Local\\npm-cache\\_npx\\1bf7c3c15bf47d04\\node_modules\\ts-node\\src\\bin.ts:649:14)",
+        "bootstrap (C:\\Users\\TemidayoOlogun\\AppData\\Local\\npm-cache\\_npx\\1bf7c3c15bf47d04\\node_modules\\ts-node\\src\\bin.ts:95:10)",
+        "main (C:\\Users\\TemidayoOlogun\\AppData\\Local\\npm-cache\\_npx\\1bf7c3c15bf47d04\\node_modules\\ts-node\\src\\bin.ts:55:10)",
+        "Object.<anonymous> (C:\\Users\\TemidayoOlogun\\AppData\\Local\\npm-cache\\_npx\\1bf7c3c15bf47d04\\node_modules\\ts-node\\src\\bin.ts:800:3)",
+        "Module._compile (node:internal/modules/cjs/loader:1812:14)",
+        "Object.<anonymous> (node:internal/modules/cjs/loader:1943:10)",
+        "Module.load (node:internal/modules/cjs/loader:1533:32)",
+        "Module._load (node:internal/modules/cjs/loader:1335:12)",
+        "wrapModuleLoad (node:internal/modules/cjs/loader:255:19)",
+        "Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)",
+        "node:internal/main/run_main_module:33:47"
+      ]
+    }
+  ],
+  "/TsinLearningStagingStack/AlbDnsName": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "AlbDnsName"
+    }
+  ],
+  "/TsinLearningStagingStack/EcrRepoUri": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "EcrRepoUri"
+    }
+  ],
+  "/TsinLearningStagingStack/ClusterName": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ClusterName"
+    }
+  ],
+  "/TsinLearningStagingStack/ServiceName": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ServiceName"
+    }
+  ],
+  "/TsinLearningStagingStack/MongoEfsId": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MongoEfsId"
+    }
+  ],
+  "/TsinLearningStagingStack/BootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BootstrapVersion"
+    }
+  ],
+  "/TsinLearningStagingStack/CheckBootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CheckBootstrapVersion"
+    }
+  ],
+  "/TsinLearningStagingStack/StagingVpc/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "StagingVpcFE1BE17E"
+    }
+  ],
+  "/TsinLearningStagingStack/StagingVpc/IGW": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "StagingVpcIGW56D5C162"
+    }
+  ],
+  "/TsinLearningStagingStack/StagingVpc/VPCGW": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "StagingVpcVPCGWFBBE476D"
+    }
+  ],
+  "/TsinLearningStagingStack/MongoEfs/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MongoEfs96E682F3"
+    }
+  ],
+  "/TsinLearningStagingStack/MongoEfs/EfsMountTarget1": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MongoEfsEfsMountTarget13E68892B"
+    }
+  ],
+  "/TsinLearningStagingStack/MongoEfs/EfsMountTarget2": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MongoEfsEfsMountTarget2E418B604"
+    }
+  ],
+  "/TsinLearningStagingStack/StagingCluster/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "StagingClusterD0FDCA09"
+    }
+  ],
+  "/TsinLearningStagingStack/BackendTaskDef/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BackendTaskDef6ECE986E"
+    }
+  ],
+  "/TsinLearningStagingStack/BackendLogs/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BackendLogs21FC23BC"
+    }
+  ],
+  "/TsinLearningStagingStack/MongoLogs/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MongoLogs79D080CB"
+    }
+  ],
+  "/TsinLearningStagingStack/StagingAlb/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "StagingAlb2B5E2283"
+    }
+  ],
+  "/TsinLearningStagingStack/ServiceSg/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ServiceSg2632F788"
+    }
+  ],
+  "/TsinLearningStagingStack/ServiceSg/from TsinLearningStagingStackStagingAlbSecurityGroup733F2E4E:27017": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ServiceSgfromTsinLearningStagingStackStagingAlbSecurityGroup733F2E4E27017C448137E"
+    }
+  ],
+  "/TsinLearningStagingStack/ServiceSg/from TsinLearningStagingStackStagingAlbSecurityGroup733F2E4E:8003": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ServiceSgfromTsinLearningStagingStackStagingAlbSecurityGroup733F2E4E800345DC74F4"
+    }
+  ],
+  "/TsinLearningStagingStack/BackendService/Service": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BackendService7A4224EE"
+    }
+  ],
+  "/TsinLearningStagingStack/CDKMetadata/Default": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CDKMetadata"
+    }
+  ],
+  "/TsinLearningStagingStack/StagingVpc/PublicSubnet1/Subnet": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "StagingVpcPublicSubnet1SubnetA8A7EB38"
+    }
+  ],
+  "/TsinLearningStagingStack/StagingVpc/PublicSubnet1/RouteTable": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "StagingVpcPublicSubnet1RouteTable4D7BB0EF"
+    }
+  ],
+  "/TsinLearningStagingStack/StagingVpc/PublicSubnet1/RouteTableAssociation": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "StagingVpcPublicSubnet1RouteTableAssociation805B41D4"
+    }
+  ],
+  "/TsinLearningStagingStack/StagingVpc/PublicSubnet1/DefaultRoute": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "StagingVpcPublicSubnet1DefaultRoute41025E77"
+    }
+  ],
+  "/TsinLearningStagingStack/StagingVpc/PublicSubnet1/EIP": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "StagingVpcPublicSubnet1EIPCE0D47E1"
+    }
+  ],
+  "/TsinLearningStagingStack/StagingVpc/PublicSubnet1/NATGateway": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "StagingVpcPublicSubnet1NATGatewayCD437019"
+    }
+  ],
+  "/TsinLearningStagingStack/StagingVpc/PublicSubnet2/Subnet": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "StagingVpcPublicSubnet2Subnet6D8497AB"
+    }
+  ],
+  "/TsinLearningStagingStack/StagingVpc/PublicSubnet2/RouteTable": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "StagingVpcPublicSubnet2RouteTable5E8EE010"
+    }
+  ],
+  "/TsinLearningStagingStack/StagingVpc/PublicSubnet2/RouteTableAssociation": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "StagingVpcPublicSubnet2RouteTableAssociationD71BA708"
+    }
+  ],
+  "/TsinLearningStagingStack/StagingVpc/PublicSubnet2/DefaultRoute": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "StagingVpcPublicSubnet2DefaultRoute711646FE"
+    }
+  ],
+  "/TsinLearningStagingStack/StagingVpc/PrivateSubnet1/Subnet": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "StagingVpcPrivateSubnet1SubnetCFAB58AC"
+    }
+  ],
+  "/TsinLearningStagingStack/StagingVpc/PrivateSubnet1/RouteTable": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "StagingVpcPrivateSubnet1RouteTableABDCBAA0"
+    }
+  ],
+  "/TsinLearningStagingStack/StagingVpc/PrivateSubnet1/RouteTableAssociation": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "StagingVpcPrivateSubnet1RouteTableAssociation78EAAEE0"
+    }
+  ],
+  "/TsinLearningStagingStack/StagingVpc/PrivateSubnet1/DefaultRoute": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "StagingVpcPrivateSubnet1DefaultRouteD18B7ED3"
+    }
+  ],
+  "/TsinLearningStagingStack/StagingVpc/PrivateSubnet2/Subnet": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "StagingVpcPrivateSubnet2Subnet298E9A5A"
+    }
+  ],
+  "/TsinLearningStagingStack/StagingVpc/PrivateSubnet2/RouteTable": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "StagingVpcPrivateSubnet2RouteTable2F568731"
+    }
+  ],
+  "/TsinLearningStagingStack/StagingVpc/PrivateSubnet2/RouteTableAssociation": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "StagingVpcPrivateSubnet2RouteTableAssociation9A4D94E2"
+    }
+  ],
+  "/TsinLearningStagingStack/StagingVpc/PrivateSubnet2/DefaultRoute": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "StagingVpcPrivateSubnet2DefaultRoute4776CAB2"
+    }
+  ],
+  "/TsinLearningStagingStack/MongoEfs/EfsSecurityGroup/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MongoEfsEfsSecurityGroup61038247"
+    }
+  ],
+  "/TsinLearningStagingStack/MongoEfs/EfsSecurityGroup/from TsinLearningStagingStackServiceSgB3CA98F3:2049": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MongoEfsEfsSecurityGroupfromTsinLearningStagingStackServiceSgB3CA98F32049CCE78B90"
+    }
+  ],
+  "/TsinLearningStagingStack/MongoEfs/MongoData/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MongoEfsMongoData45B8F41C"
+    }
+  ],
+  "/TsinLearningStagingStack/BackendTaskDef/TaskRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BackendTaskDefTaskRoleBA953A3B"
+    }
+  ],
+  "/TsinLearningStagingStack/BackendTaskDef/ExecutionRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BackendTaskDefExecutionRoleC5A001DB"
+    }
+  ],
+  "/TsinLearningStagingStack/StagingAlb/SecurityGroup/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "StagingAlbSecurityGroupC9367C76"
+    }
+  ],
+  "/TsinLearningStagingStack/StagingAlb/SecurityGroup/to TsinLearningStagingStackServiceSgB3CA98F3:27017": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "StagingAlbSecurityGrouptoTsinLearningStagingStackServiceSgB3CA98F32701764A44050"
+    }
+  ],
+  "/TsinLearningStagingStack/StagingAlb/SecurityGroup/to TsinLearningStagingStackServiceSgB3CA98F3:8003": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "StagingAlbSecurityGrouptoTsinLearningStagingStackServiceSgB3CA98F380035EEE6365"
+    }
+  ],
+  "/TsinLearningStagingStack/StagingAlb/HttpListener/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "StagingAlbHttpListener61CA0ED2"
+    }
+  ],
+  "/TsinLearningStagingStack/BackendTaskDef/TaskRole/DefaultPolicy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BackendTaskDefTaskRoleDefaultPolicy2C657A56"
+    }
+  ],
+  "/TsinLearningStagingStack/BackendTaskDef/ExecutionRole/DefaultPolicy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BackendTaskDefExecutionRoleDefaultPolicyAA625660"
+    }
+  ],
+  "/TsinLearningStagingStack/StagingAlb/HttpListener/BackendTargetGroup/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "StagingAlbHttpListenerBackendTargetGroup8504907E"
+    }
+  ]
+}
