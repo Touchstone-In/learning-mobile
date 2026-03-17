@@ -121,6 +121,7 @@ jobs:
 
       - name: Build release AAB
         env:
+          VERSION_CODE: ${{ github.run_number }}
           KEYSTORE_FILE: ${{ github.workspace }}/app/release.keystore
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
@@ -204,6 +205,7 @@ jobs:
 
       - name: Build release AAB
         env:
+          VERSION_CODE: ${{ github.run_number }}
           KEYSTORE_FILE: ${{ github.workspace }}/app/release.keystore
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
