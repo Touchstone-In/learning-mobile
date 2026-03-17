@@ -11,6 +11,16 @@ android {
     namespace = "com.touchstoneinstitute.learningcompanion"
     compileSdk = 35
 
+    signingConfigs {
+        create("release") {
+            val keystorePath = System.getenv("KEYSTORE_FILE") ?: "${rootProject.projectDir}/app/release.keystore"
+            storeFile = file(keystorePath)
+            storePassword = System.getenv("KEYSTORE_PASSWORD") ?: "LearningCompanion2026!"
+            keyAlias = System.getenv("KEY_ALIAS") ?: "learning-companion"
+            keyPassword = System.getenv("KEY_PASSWORD") ?: "LearningCompanion2026!"
+        }
+    }
+
     defaultConfig {
         applicationId = "com.touchstoneinstitute.learningcompanion"
         minSdk = 26
@@ -43,6 +53,7 @@ android {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
+            signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

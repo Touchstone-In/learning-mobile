@@ -2,9 +2,7 @@ name: Android CI
 
 on:
   push:
-    branches: [main, develop, staging]
-  pull_request:
-    branches: [main, develop, staging]
+    branches: [staging]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -123,10 +121,11 @@ jobs:
 
       - name: Build release AAB
         env:
+          KEYSTORE_FILE: ${{ github.workspace }}/app/release.keystore
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-        run: ./gradlew bundleRelease --stacktrace || echo "Release build requires signing config"
+        run: ./gradlew bundleRelease --stacktrace
 
       - name: Upload release AAB artifact
         if: success()
@@ -205,10 +204,11 @@ jobs:
 
       - name: Build release AAB
         env:
+          KEYSTORE_FILE: ${{ github.workspace }}/app/release.keystore
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-        run: ./gradlew bundleRelease --stacktrace || echo "Release build requires signing config"
+        run: ./gradlew bundleRelease --stacktrace
 
       - name: Upload release AAB artifact
         if: success()
