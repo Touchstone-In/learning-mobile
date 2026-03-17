@@ -1,0 +1,18 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Gradle wrapper
+gradlew text eol=lf
+gradlew.bat text eol=crlf
+
+# Binary files - never apply line ending conversion
+*.jar binary
+*.jks binary
+*.keystore binary
+*.png binary
+*.jpg binary
+*.gif binary
+*.ico binary
+*.aab binary
+*.apk binary
+
