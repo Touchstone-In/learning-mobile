@@ -3,6 +3,7 @@ package com.touchstoneinstitute.learningcompanion.data.repository
 import com.touchstoneinstitute.learningcompanion.data.local.TokenManager
 import com.touchstoneinstitute.learningcompanion.data.remote.api.AuthApi
 import com.touchstoneinstitute.learningcompanion.data.remote.api.UserApi
+import com.touchstoneinstitute.learningcompanion.data.remote.dto.AuthUserDto
 import com.touchstoneinstitute.learningcompanion.data.remote.dto.LoginRequest
 import com.touchstoneinstitute.learningcompanion.data.remote.dto.LoginResponse
 import com.touchstoneinstitute.learningcompanion.data.remote.dto.UserDto
@@ -42,7 +43,13 @@ class AuthRepositoryTest {
             token = "jwt-token-123",
             refreshToken = "refresh-456",
             id = "user-1",
-            email = "test@tsin.ca"
+            email = "test@tsin.ca",
+            user = AuthUserDto(
+                id = "user-1",
+                email = "test@tsin.ca",
+                isOtpEnabled = true,
+                otpMeans = "App"
+            )
         )
         coEvery { authApi.login(any()) } returns response
 
@@ -51,6 +58,49 @@ class AuthRepositoryTest {
         assertTrue(result is AuthResult.Success)
         assertEquals("jwt-token-123", (result as AuthResult.Success).data.token)
         coVerify { tokenManager.saveTokens("jwt-token-123", "refresh-456") }
+    }
+
+    @Test
+    fun `login without MFA setup returns setup required`() = runTest {
+        val response = LoginResponse(
+            token = "jwt-token-123",
+            refreshToken = "refresh-456",
+            id = "user-1",
+            email = "test@tsin.ca",
+            user = AuthUserDto(
+                id = "user-1",
+                email = "test@tsin.ca",
+                isOtpEnabled = false,
+                otpMeans = "None"
+            )
+        )
+        coEvery { authApi.login(any()) } returns response
+
+        val result = repository.login("test@tsin.ca", "pass123")
+
+        assertTrue(result is AuthResult.MfaSetupRequired)
+    }
+
+    @Test
+    fun `login requiring MFA returns success without storing tokens`() = runTest {
+        val response = LoginResponse(
+            email = "test@tsin.ca",
+            requiresMfa = true,
+            mfaMethod = "App",
+            user = AuthUserDto(
+                id = "user-1",
+                email = "test@tsin.ca",
+                isOtpEnabled = true,
+                otpMeans = "App"
+            )
+        )
+        coEvery { authApi.login(any()) } returns response
+
+        val result = repository.login("test@tsin.ca", "pass123")
+
+        assertTrue(result is AuthResult.Success)
+        assertTrue((result as AuthResult.Success).data.requiresMfa == true)
+        coVerify(exactly = 0) { tokenManager.saveTokens(any(), any()) }
     }
 
     @Test
