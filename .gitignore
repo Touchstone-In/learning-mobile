@@ -18,3 +18,7 @@ local.properties
 *.keystore
 google-services.json
 
+# Service account keys / secrets
+*.json.bak
+docs/Key-*.json
+
