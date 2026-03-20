@@ -5,6 +5,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 
 private val LightColorScheme = lightColorScheme(
     primary = TsinPrimary,
@@ -72,10 +73,12 @@ fun TSINLearningCompanionTheme(
 
     // Status bar color is managed by enableEdgeToEdge() in MainActivity
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = TSINTypography,
-        content = content
-    )
+    CompositionLocalProvider(LocalTsinSpacing provides TsinSpacing()) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = TSINTypography,
+            content = content
+        )
+    }
 }
 

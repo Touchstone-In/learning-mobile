@@ -366,14 +366,14 @@ private fun LoginBrandLogo() {
                 text = "Learning",
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .padding(bottom = 24.dp),
+                    .padding(bottom = 32.dp),
                 style = MaterialTheme.typography.titleMedium,
                 color = Color.White,
                 fontWeight = FontWeight.Bold
             )
         }
 
-        Spacer(modifier = Modifier.height(6.dp))
+        Spacer(modifier = Modifier.height(2.dp))
         Text(
             text = stringResource(R.string.startup_loader_tagline),
             style = MaterialTheme.typography.titleLarge,

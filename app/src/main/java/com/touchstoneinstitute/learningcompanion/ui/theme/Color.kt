@@ -8,17 +8,17 @@ val TsinLime = Color(0xFFB5BE00)
 val TsinNavyLight = Color(0xFF1A4A8A)
 val TsinNavyDark = Color(0xFF001B4D)
 
-// Google Console-style surface hierarchy
+// Guided learning surface hierarchy
 val ConsoleSurface = Color(0xFFFFFFFF)
-val ConsoleSurfaceVariant = Color(0xFFF8F9FA)
-val ConsoleSurfaceContainer = Color(0xFFF1F3F4)
-val ConsoleSurfaceContainerHigh = Color(0xFFE8EAED)
-val ConsoleBackground = Color(0xFFFFFFFF)
+val ConsoleSurfaceVariant = Color(0xFFF6F8FC)
+val ConsoleSurfaceContainer = Color(0xFFF0F4FA)
+val ConsoleSurfaceContainerHigh = Color(0xFFE6ECF6)
+val ConsoleBackground = Color(0xFFFAFBFF)
 
-// Text colors (Google Console density)
-val ConsoleOnSurface = Color(0xFF202124)
-val ConsoleOnSurfaceVariant = Color(0xFF5F6368)
-val ConsoleOnSurfaceDisabled = Color(0xFF9AA0A6)
+// Text colors with softer, learner-friendly contrast
+val ConsoleOnSurface = Color(0xFF18202D)
+val ConsoleOnSurfaceVariant = Color(0xFF5A6472)
+val ConsoleOnSurfaceDisabled = Color(0xFF96A0AF)
 
 // Primary palette for Material 3
 val TsinPrimary = TsinNavy
@@ -44,18 +44,28 @@ val TsinOnError = Color(0xFFFFFFFF)
 val TsinErrorContainer = Color(0xFFFCE8E6)
 val TsinOnErrorContainer = Color(0xFF410E0B)
 
+// Success / warning guidance tones
+val TsinSuccess = Color(0xFF1F6A47)
+val TsinOnSuccess = Color(0xFFFFFFFF)
+val TsinSuccessContainer = Color(0xFFD7F2E1)
+val TsinOnSuccessContainer = Color(0xFF032114)
+val TsinWarning = Color(0xFF8A6116)
+val TsinOnWarning = Color(0xFFFFFFFF)
+val TsinWarningContainer = Color(0xFFFFEDBF)
+val TsinOnWarningContainer = Color(0xFF2A1800)
+
 // Outline / dividers
-val ConsoleOutline = Color(0xFFDADCE0)
-val ConsoleOutlineVariant = Color(0xFFC4C7C5)
+val ConsoleOutline = Color(0xFFD7DEE8)
+val ConsoleOutlineVariant = Color(0xFFBEC7D3)
 
 // Dark theme colors
 val TsinPrimaryDark = Color(0xFFABC7FF)
 val TsinOnPrimaryDark = Color(0xFF002F65)
 val TsinPrimaryContainerDark = Color(0xFF00458E)
 val TsinOnPrimaryContainerDark = Color(0xFFD6E3FF)
-val ConsoleSurfaceDark = Color(0xFF1F1F1F)
-val ConsoleSurfaceVariantDark = Color(0xFF303134)
-val ConsoleOnSurfaceDark = Color(0xFFE8EAED)
-val ConsoleOnSurfaceVariantDark = Color(0xFF9AA0A6)
-val ConsoleBackgroundDark = Color(0xFF1F1F1F)
+val ConsoleSurfaceDark = Color(0xFF171C26)
+val ConsoleSurfaceVariantDark = Color(0xFF232A36)
+val ConsoleOnSurfaceDark = Color(0xFFF0F3F9)
+val ConsoleOnSurfaceVariantDark = Color(0xFFB6C0CE)
+val ConsoleBackgroundDark = Color(0xFF10151E)
 

@@ -2,7 +2,6 @@ package com.touchstoneinstitute.learningcompanion.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
@@ -13,7 +12,7 @@ val ConsoleHeadingFamily = FontFamily.SansSerif
 val ConsoleBodyFamily = FontFamily.SansSerif
 
 val TSINTypography = Typography(
-    // Display - rarely used in console-style UI
+    // Display - reserved for rare marketing moments
     displayLarge = TextStyle(
         fontFamily = ConsoleHeadingFamily,
         fontWeight = FontWeight.Normal,
@@ -21,25 +20,25 @@ val TSINTypography = Typography(
         lineHeight = 64.sp,
         letterSpacing = (-0.25).sp
     ),
-    // Headlines - page titles (Google Console style: medium weight, clean)
+    // Headlines - clearer mobile-first hierarchy
     headlineLarge = TextStyle(
         fontFamily = ConsoleHeadingFamily,
-        fontWeight = FontWeight.Normal,
-        fontSize = 28.sp,
-        lineHeight = 36.sp,
+        fontWeight = FontWeight.Medium,
+        fontSize = 30.sp,
+        lineHeight = 38.sp,
         letterSpacing = 0.sp
     ),
     headlineMedium = TextStyle(
         fontFamily = ConsoleHeadingFamily,
-        fontWeight = FontWeight.Normal,
-        fontSize = 24.sp,
+        fontWeight = FontWeight.Medium,
+        fontSize = 26.sp,
         lineHeight = 32.sp,
         letterSpacing = 0.sp
     ),
     headlineSmall = TextStyle(
         fontFamily = ConsoleHeadingFamily,
         fontWeight = FontWeight.Medium,
-        fontSize = 20.sp,
+        fontSize = 22.sp,
         lineHeight = 28.sp,
         letterSpacing = 0.sp
     ),
@@ -47,44 +46,44 @@ val TSINTypography = Typography(
     titleLarge = TextStyle(
         fontFamily = ConsoleHeadingFamily,
         fontWeight = FontWeight.Medium,
-        fontSize = 18.sp,
-        lineHeight = 24.sp,
+        fontSize = 20.sp,
+        lineHeight = 26.sp,
         letterSpacing = 0.sp
     ),
     titleMedium = TextStyle(
         fontFamily = ConsoleBodyFamily,
         fontWeight = FontWeight.Medium,
-        fontSize = 14.sp,
-        lineHeight = 20.sp,
+        fontSize = 16.sp,
+        lineHeight = 22.sp,
         letterSpacing = 0.1.sp
     ),
     titleSmall = TextStyle(
         fontFamily = ConsoleBodyFamily,
         fontWeight = FontWeight.Medium,
-        fontSize = 12.sp,
-        lineHeight = 16.sp,
+        fontSize = 14.sp,
+        lineHeight = 20.sp,
         letterSpacing = 0.1.sp
     ),
-    // Body - content text (Google Console: 14sp body, dense)
+    // Body - more generous mobile reading scale
     bodyLarge = TextStyle(
         fontFamily = ConsoleBodyFamily,
         fontWeight = FontWeight.Normal,
-        fontSize = 14.sp,
-        lineHeight = 20.sp,
+        fontSize = 16.sp,
+        lineHeight = 24.sp,
         letterSpacing = 0.25.sp
     ),
     bodyMedium = TextStyle(
         fontFamily = ConsoleBodyFamily,
         fontWeight = FontWeight.Normal,
-        fontSize = 13.sp,
-        lineHeight = 18.sp,
+        fontSize = 14.sp,
+        lineHeight = 21.sp,
         letterSpacing = 0.25.sp
     ),
     bodySmall = TextStyle(
         fontFamily = ConsoleBodyFamily,
         fontWeight = FontWeight.Normal,
-        fontSize = 12.sp,
-        lineHeight = 16.sp,
+        fontSize = 13.sp,
+        lineHeight = 18.sp,
         letterSpacing = 0.4.sp
     ),
     // Label - buttons, chips, tabs
@@ -98,16 +97,16 @@ val TSINTypography = Typography(
     labelMedium = TextStyle(
         fontFamily = ConsoleBodyFamily,
         fontWeight = FontWeight.Medium,
-        fontSize = 12.sp,
-        lineHeight = 16.sp,
-        letterSpacing = 0.5.sp
+        fontSize = 13.sp,
+        lineHeight = 18.sp,
+        letterSpacing = 0.35.sp
     ),
     labelSmall = TextStyle(
         fontFamily = ConsoleBodyFamily,
         fontWeight = FontWeight.Medium,
         fontSize = 11.sp,
         lineHeight = 16.sp,
-        letterSpacing = 0.5.sp
+        letterSpacing = 0.35.sp
     )
 )
 
