@@ -108,7 +108,7 @@ fun LoginScreen(
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
-                    text = "Multi-factor authentication (MFA) must be set up before you can use the mobile app.\n\nPlease log in to the TSIN Learning Portal on a computer or browser to complete your MFA setup, then return here to sign in.",
+                    text = "This account needs multi-factor authentication (MFA) set up before it can use the mobile app.\n\nPlease sign in to the TSIN Learning Portal on a computer or in a browser to complete MFA setup, then return here to sign in.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center

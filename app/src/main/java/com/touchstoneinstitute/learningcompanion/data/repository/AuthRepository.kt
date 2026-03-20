@@ -31,6 +31,8 @@ class AuthRepository @Inject constructor(
      * If MFA is not required, stores tokens and returns the response.
      * If MFA is required, returns the response without tokens so the UI can
      * navigate to the MFA verification screen.
+     * If the account is still using a generated invitation password and MFA is
+     * not configured yet, prompt the user to finish MFA setup on the web portal.
      */
     suspend fun login(email: String, password: String): AuthResult<LoginResponse> {
         return try {
@@ -38,11 +40,11 @@ class AuthRepository @Inject constructor(
             if (response.requiresMfa == true) {
                 // MFA required — don't store tokens yet (there are none)
                 AuthResult.Success(response)
-            } else if (response.user?.isOtpEnabled != true) {
-                // Login succeeded but MFA is not set up — block access
+            } else if (response.isGeneratedPassword == true && response.user?.isOtpEnabled != true) {
+                // Likely a newly invited account that still needs MFA setup in the web portal
                 AuthResult.MfaSetupRequired
             } else {
-                // MFA is set up and verified — store tokens
+                // MFA is either disabled or already satisfied — store tokens
                 response.token?.let { token ->
                     tokenManager.saveTokens(
                         accessToken = token,

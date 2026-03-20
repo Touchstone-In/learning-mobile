@@ -23,7 +23,7 @@ data class LoginUiState(
     val mfaMethod: String? = null,
     /** The email used in the login attempt — needed to verify OTP. */
     val mfaEmail: String? = null,
-    /** Set when login succeeded but the user has not configured MFA in the web portal. */
+    /** Set when a likely invited/new account must complete MFA setup in the web portal. */
     val mfaSetupRequired: Boolean = false
 )
 

@@ -73,6 +73,38 @@ class LoginViewModelTest {
     }
 
     @Test
+    fun `login requiring MFA updates MFA state instead of logging in`() = runTest {
+        coEvery { authRepository.login("user@tsin.ca", "pass") } returns AuthResult.Success(
+            LoginResponse(requiresMfa = true, mfaMethod = "App")
+        )
+        viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.login("user@tsin.ca", "pass")
+        advanceUntilIdle()
+
+        assertFalse(viewModel.uiState.value.isLoggedIn)
+        assertFalse(viewModel.uiState.value.isLoading)
+        assertTrue(viewModel.uiState.value.requiresMfa)
+        assertEquals("App", viewModel.uiState.value.mfaMethod)
+        assertEquals("user@tsin.ca", viewModel.uiState.value.mfaEmail)
+    }
+
+    @Test
+    fun `login requiring MFA setup shows setup prompt`() = runTest {
+        coEvery { authRepository.login("user@tsin.ca", "pass") } returns AuthResult.MfaSetupRequired
+        viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.login("user@tsin.ca", "pass")
+        advanceUntilIdle()
+
+        assertFalse(viewModel.uiState.value.isLoggedIn)
+        assertFalse(viewModel.uiState.value.isLoading)
+        assertTrue(viewModel.uiState.value.mfaSetupRequired)
+    }
+
+    @Test
     fun `login failure sets error message`() = runTest {
         coEvery { authRepository.login("bad@tsin.ca", "wrong") } returns
                 AuthResult.Error("Invalid email or password")

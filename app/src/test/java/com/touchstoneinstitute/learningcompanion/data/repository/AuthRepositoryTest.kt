@@ -61,7 +61,7 @@ class AuthRepositoryTest {
     }
 
     @Test
-    fun `login without MFA setup returns setup required`() = runTest {
+    fun `login with MFA disabled returns success and stores tokens`() = runTest {
         val response = LoginResponse(
             token = "jwt-token-123",
             refreshToken = "refresh-456",
@@ -78,7 +78,32 @@ class AuthRepositoryTest {
 
         val result = repository.login("test@tsin.ca", "pass123")
 
+        assertTrue(result is AuthResult.Success)
+        assertEquals("jwt-token-123", (result as AuthResult.Success).data.token)
+        coVerify { tokenManager.saveTokens("jwt-token-123", "refresh-456") }
+    }
+
+    @Test
+    fun `login with generated password and no MFA setup returns setup required`() = runTest {
+        val response = LoginResponse(
+            token = "jwt-token-123",
+            refreshToken = "refresh-456",
+            id = "user-1",
+            email = "test@tsin.ca",
+            isGeneratedPassword = true,
+            user = AuthUserDto(
+                id = "user-1",
+                email = "test@tsin.ca",
+                isOtpEnabled = false,
+                otpMeans = "None"
+            )
+        )
+        coEvery { authApi.login(any()) } returns response
+
+        val result = repository.login("test@tsin.ca", "pass123")
+
         assertTrue(result is AuthResult.MfaSetupRequired)
+        coVerify(exactly = 0) { tokenManager.saveTokens(any(), any()) }
     }
 
     @Test

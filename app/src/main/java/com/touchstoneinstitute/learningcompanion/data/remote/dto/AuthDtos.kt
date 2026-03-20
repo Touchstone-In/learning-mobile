@@ -8,7 +8,7 @@ data class LoginRequest(
 )
 
 /**
- * Response from the auth service (userBaseUrl/auth/authenticate-profiile).
+ * Response from the auth service (userBaseUrl/auth/login).
  * When MFA is required, token will be null and requiresMfa will be true.
  * When MFA is not required, token will be present.
  */
@@ -16,9 +16,11 @@ data class LoginResponse(
     val success: Boolean? = null,
     val token: String? = null,
     val refreshToken: String? = null,
+    val expiresIn: Int? = null,
     val id: String? = null,
     val email: String? = null,
     val role: String? = null,
+    val isGeneratedPassword: Boolean? = null,
     /** Auth service user object — includes isOtpEnabled / otpMeans. */
     val user: AuthUserDto? = null,
     val requiresMfa: Boolean? = null,

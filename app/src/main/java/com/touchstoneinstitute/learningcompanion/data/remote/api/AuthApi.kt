@@ -16,7 +16,7 @@ import retrofit2.http.Path
  */
 interface AuthApi {
 
-    @POST("auth/authenticate-profiile")
+    @POST("auth/login")
     suspend fun login(@Body request: LoginRequest): LoginResponse
 
     @POST("auth/refresh")
