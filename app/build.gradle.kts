@@ -9,6 +9,7 @@
 android {
     namespace = "com.touchstoneinstitute.learningcompanion"
     compileSdk = 35
+    ndkVersion = "28.2.13676358"
 
     signingConfigs {
         create("release") {
