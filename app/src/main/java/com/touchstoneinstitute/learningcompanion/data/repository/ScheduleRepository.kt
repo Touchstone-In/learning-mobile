@@ -3,12 +3,18 @@ package com.touchstoneinstitute.learningcompanion.data.repository
 import com.touchstoneinstitute.learningcompanion.data.local.dao.ScheduleDayDao
 import com.touchstoneinstitute.learningcompanion.data.local.entity.CachedScheduleDay
 import com.touchstoneinstitute.learningcompanion.data.remote.api.MobileApi
+import com.touchstoneinstitute.learningcompanion.data.remote.dto.ScheduleEntry
 import com.touchstoneinstitute.learningcompanion.data.remote.dto.ScheduleDay
 import com.touchstoneinstitute.learningcompanion.data.remote.dto.ScheduleResponse
-import com.touchstoneinstitute.learningcompanion.data.remote.dto.SessionSummary
+import com.touchstoneinstitute.learningcompanion.data.remote.dto.ScheduleWeek
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
+
+data class ScheduleData(
+    val response: ScheduleResponse,
+    val isCached: Boolean = false,
+)
 
 @Singleton
 class ScheduleRepository @Inject constructor(
@@ -16,11 +22,11 @@ class ScheduleRepository @Inject constructor(
     private val scheduleDayDao: ScheduleDayDao
 ) {
 
-    suspend fun getSchedule(): AuthResult<ScheduleResponse> {
+    suspend fun getSchedule(): AuthResult<ScheduleData> {
         return try {
             val schedule = mobileApi.getSchedule()
             cacheSchedule(schedule)
-            AuthResult.Success(schedule)
+            AuthResult.Success(ScheduleData(response = schedule))
         } catch (e: retrofit2.HttpException) {
             tryFallbackFromCache("Failed to load schedule (${e.code()})", e)
         } catch (e: java.io.IOException) {
@@ -30,13 +36,13 @@ class ScheduleRepository @Inject constructor(
         }
     }
 
-    private suspend fun tryFallbackFromCache(message: String, cause: Throwable): AuthResult<ScheduleResponse> {
+    private suspend fun tryFallbackFromCache(message: String, cause: Throwable): AuthResult<ScheduleData> {
         return try {
             val cached = scheduleDayDao.getScheduleDays("default")
             if (cached.isNotEmpty()) {
                 Timber.d("Returning ${cached.size} cached schedule rows")
                 val response = cached.toScheduleResponse()
-                AuthResult.Success(response)
+                AuthResult.Success(ScheduleData(response = response, isCached = true))
             } else {
                 AuthResult.Error(message, cause)
             }
@@ -47,21 +53,16 @@ class ScheduleRepository @Inject constructor(
 
     private suspend fun cacheSchedule(response: ScheduleResponse) {
         try {
-            val entities = response.days.flatMap { day ->
-                day.sessions.map { session ->
+            val entities = response.weeks.flatMap { week ->
+                week.days.map { day ->
                     CachedScheduleDay(
                         userId = "default",
-                        date = day.date,
-                        dayName = day.dayName,
-                        sessionId = session.id,
-                        sessionTitle = session.title,
-                        sessionDate = session.date,
-                        sessionStartTime = session.startTime,
-                        sessionEndTime = session.endTime,
-                        sessionLocation = session.location,
-                        sessionType = session.type,
-                        weekStart = response.weekStart,
-                        weekEnd = response.weekEnd,
+                        weekName = week.weekName,
+                        day = day.day,
+                        period = day.period,
+                        sessionName = day.session.sessionName,
+                        track = day.session.track,
+                        group = day.session.group,
                         lastUpdated = response.lastUpdated
                     )
                 }
@@ -73,33 +74,39 @@ class ScheduleRepository @Inject constructor(
     }
 
     private fun List<CachedScheduleDay>.toScheduleResponse(): ScheduleResponse {
-        val weekStart = firstOrNull()?.weekStart
-        val weekEnd = firstOrNull()?.weekEnd
         val lastUpdated = firstOrNull()?.lastUpdated
+        val dayOrder = listOf("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
+        val periodOrder = listOf("AM", "PM")
 
-        val days = groupBy { it.date to it.dayName }.map { (key, rows) ->
-            ScheduleDay(
-                date = key.first,
-                dayName = key.second,
-                sessions = rows.map { row ->
-                    SessionSummary(
-                        id = row.sessionId,
-                        title = row.sessionTitle,
-                        date = row.sessionDate,
-                        startTime = row.sessionStartTime,
-                        endTime = row.sessionEndTime,
-                        location = row.sessionLocation,
-                        type = row.sessionType
-                    )
-                }
-            )
-        }
+        val weeks = groupBy { it.weekName }
+            .entries
+            .map { (weekName, rows) ->
+                ScheduleWeek(
+                    weekName = weekName,
+                    days = rows
+                        .map { row ->
+                            ScheduleDay(
+                                day = row.day,
+                                period = row.period,
+                                session = ScheduleEntry(
+                                    sessionName = row.sessionName,
+                                    track = row.track,
+                                    group = row.group,
+                                )
+                            )
+                        }
+                        .sortedWith(
+                            compareBy<ScheduleDay>(
+                                { dayOrder.indexOf(it.day).takeIf { index -> index >= 0 } ?: Int.MAX_VALUE },
+                                { periodOrder.indexOf(it.period).takeIf { index -> index >= 0 } ?: Int.MAX_VALUE },
+                            )
+                        )
+                )
+            }
 
         return ScheduleResponse(
-            weekStart = weekStart,
-            weekEnd = weekEnd,
-            days = days,
-            lastUpdated = lastUpdated
+            lastUpdated = lastUpdated,
+            weeks = weeks,
         )
     }
 }

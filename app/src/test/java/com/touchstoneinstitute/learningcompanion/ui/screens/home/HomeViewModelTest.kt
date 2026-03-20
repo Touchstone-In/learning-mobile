@@ -17,6 +17,7 @@ import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
@@ -50,8 +51,10 @@ class HomeViewModelTest {
         advanceUntilIdle()
 
         assertFalse(vm.uiState.value.isLoading)
+        assertFalse(vm.uiState.value.isRefreshing)
         assertEquals("Alice", vm.uiState.value.user?.firstName)
         assertEquals("CMP", vm.uiState.value.overview?.programName)
+        assertFalse(vm.uiState.value.isCached)
     }
 
     @Test
@@ -62,8 +65,27 @@ class HomeViewModelTest {
         advanceUntilIdle()
 
         assertFalse(vm.uiState.value.isLoading)
+        assertFalse(vm.uiState.value.isRefreshing)
         assertEquals("Network error", vm.uiState.value.errorMessage)
         assertNull(vm.uiState.value.user)
+    }
+
+    @Test
+    fun `exposes cached state when repository falls back to saved overview`() = runTest {
+        coEvery { homeRepository.getHomeData() } returns AuthResult.Success(
+            HomeData(
+                user = null,
+                overview = LearnerOverviewResponse(programName = "Cached Program"),
+                isCached = true,
+            )
+        )
+
+        val vm = HomeViewModel(homeRepository)
+        advanceUntilIdle()
+
+        assertFalse(vm.uiState.value.isLoading)
+        assertTrue(vm.uiState.value.isCached)
+        assertEquals("Cached Program", vm.uiState.value.overview?.programName)
     }
 
     @Test
@@ -84,6 +106,7 @@ class HomeViewModelTest {
         advanceUntilIdle()
 
         assertEquals("Robert", vm.uiState.value.user?.firstName)
+        assertFalse(vm.uiState.value.isRefreshing)
     }
 }
 

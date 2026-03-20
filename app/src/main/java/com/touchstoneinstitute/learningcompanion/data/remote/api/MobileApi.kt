@@ -2,6 +2,7 @@ package com.touchstoneinstitute.learningcompanion.data.remote.api
 
 import com.touchstoneinstitute.learningcompanion.data.remote.dto.DeviceRegistrationRequest
 import com.touchstoneinstitute.learningcompanion.data.remote.dto.LearnerOverviewResponse
+import com.touchstoneinstitute.learningcompanion.data.remote.dto.LearnerResultsResponse
 import com.touchstoneinstitute.learningcompanion.data.remote.dto.NotificationPreferencesResponse
 import com.touchstoneinstitute.learningcompanion.data.remote.dto.ScheduleResponse
 import com.touchstoneinstitute.learningcompanion.data.remote.dto.UpdatePreferencesRequest
@@ -17,6 +18,9 @@ interface MobileApi {
 
     @GET("mobile/me/schedule")
     suspend fun getSchedule(): ScheduleResponse
+
+    @GET("mobile/me/results")
+    suspend fun getResults(): LearnerResultsResponse
 
     @POST("mobile/devices")
     suspend fun registerDevice(@Body request: DeviceRegistrationRequest)

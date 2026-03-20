@@ -10,7 +10,7 @@ import com.touchstoneinstitute.learningcompanion.data.local.entity.CachedSchedul
 @Dao
 interface ScheduleDayDao {
 
-    @Query("SELECT * FROM cached_schedule_day WHERE userId = :userId ORDER BY date ASC, sessionStartTime ASC")
+    @Query("SELECT * FROM cached_schedule_day WHERE userId = :userId ORDER BY id ASC")
     suspend fun getScheduleDays(userId: String): List<CachedScheduleDay>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

@@ -2,33 +2,46 @@ package com.touchstoneinstitute.learningcompanion.data.remote.dto
 
 data class LearnerOverviewResponse(
     val programName: String? = null,
-    val programStatus: String? = null,
-    val nextSession: SessionSummary? = null,
-    val completedSessions: Int = 0,
-    val totalSessions: Int = 0
+    val programType: String? = null,
+    val applicationStatus: String? = null,
+    val registrationStatus: String? = null,
+    val nextSession: NextSessionSummary? = null,
+    val keyDates: List<KeyDateSummary> = emptyList(),
 )
 
-data class SessionSummary(
-    val id: String,
-    val title: String,
+data class KeyDateSummary(
+    val label: String,
     val date: String,
-    val startTime: String,
-    val endTime: String,
-    val location: String? = null,
-    val type: String? = null
+)
+
+data class NextSessionSummary(
+    val sessionName: String? = null,
+    val day: String? = null,
+    val period: String? = null,
+    val track: String? = null,
+    val group: String? = null,
 )
 
 data class ScheduleResponse(
-    val weekStart: String? = null,
-    val weekEnd: String? = null,
+    val lastUpdated: String? = null,
+    val weeks: List<ScheduleWeek> = emptyList(),
+)
+
+data class ScheduleWeek(
+    val weekName: String,
     val days: List<ScheduleDay> = emptyList(),
-    val lastUpdated: String? = null
 )
 
 data class ScheduleDay(
-    val date: String,
-    val dayName: String,
-    val sessions: List<SessionSummary> = emptyList()
+    val day: String,
+    val period: String,
+    val session: ScheduleEntry,
+)
+
+data class ScheduleEntry(
+    val sessionName: String,
+    val track: String,
+    val group: String,
 )
 
 data class DeviceRegistrationRequest(
@@ -48,4 +61,19 @@ data class UpdatePreferencesRequest(
     val pushEnabled: Boolean? = null,
     val scheduleReminders: Boolean? = null,
     val orientationReminders: Boolean? = null
+)
+
+data class LearnerResultsResponse(
+    val results: List<LearnerResultSummary> = emptyList(),
+)
+
+data class LearnerResultSummary(
+    val id: String,
+    val attendanceStatus: String? = null,
+    val asyncStatus: String? = null,
+    val associatedMedicalSchool: String? = null,
+    val postgraduateTrainingProgram: String? = null,
+    val name: String? = null,
+    val comment: String? = null,
+    val publishedAt: String? = null,
 )

@@ -4,9 +4,12 @@ import com.touchstoneinstitute.learningcompanion.data.local.dao.OverviewDao
 import com.touchstoneinstitute.learningcompanion.data.local.entity.CachedOverview
 import com.touchstoneinstitute.learningcompanion.data.remote.api.MobileApi
 import com.touchstoneinstitute.learningcompanion.data.remote.api.UserApi
+import com.touchstoneinstitute.learningcompanion.data.remote.dto.KeyDateSummary
 import com.touchstoneinstitute.learningcompanion.data.remote.dto.LearnerOverviewResponse
-import com.touchstoneinstitute.learningcompanion.data.remote.dto.SessionSummary
+import com.touchstoneinstitute.learningcompanion.data.remote.dto.NextSessionSummary
 import com.touchstoneinstitute.learningcompanion.data.remote.dto.UserDto
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -23,6 +26,8 @@ class HomeRepository @Inject constructor(
     private val mobileApi: MobileApi,
     private val overviewDao: OverviewDao
 ) {
+    private val gson = Gson()
+
 
     suspend fun getHomeData(): AuthResult<HomeData> {
         return try {
@@ -62,16 +67,15 @@ class HomeRepository @Inject constructor(
             val entity = CachedOverview(
                 userId = "default",
                 programName = overview.programName,
-                programStatus = overview.programStatus,
-                completedSessions = overview.completedSessions,
-                totalSessions = overview.totalSessions,
-                nextSessionId = overview.nextSession?.id,
-                nextSessionTitle = overview.nextSession?.title,
-                nextSessionDate = overview.nextSession?.date,
-                nextSessionStartTime = overview.nextSession?.startTime,
-                nextSessionEndTime = overview.nextSession?.endTime,
-                nextSessionLocation = overview.nextSession?.location,
-                nextSessionType = overview.nextSession?.type,
+                programType = overview.programType,
+                applicationStatus = overview.applicationStatus,
+                registrationStatus = overview.registrationStatus,
+                nextSessionName = overview.nextSession?.sessionName,
+                nextSessionDay = overview.nextSession?.day,
+                nextSessionPeriod = overview.nextSession?.period,
+                nextSessionTrack = overview.nextSession?.track,
+                nextSessionGroup = overview.nextSession?.group,
+                keyDatesJson = gson.toJson(overview.keyDates),
                 cachedAt = System.currentTimeMillis()
             )
             overviewDao.insertOverview(entity)
@@ -81,26 +85,33 @@ class HomeRepository @Inject constructor(
     }
 
     private fun CachedOverview.toLearnerOverviewResponse(): LearnerOverviewResponse {
-        val session = if (nextSessionId != null && nextSessionTitle != null &&
-            nextSessionDate != null && nextSessionStartTime != null && nextSessionEndTime != null
+        val session = if (
+            nextSessionName != null || nextSessionDay != null || nextSessionPeriod != null ||
+            nextSessionTrack != null || nextSessionGroup != null
         ) {
-            SessionSummary(
-                id = nextSessionId,
-                title = nextSessionTitle,
-                date = nextSessionDate,
-                startTime = nextSessionStartTime,
-                endTime = nextSessionEndTime,
-                location = nextSessionLocation,
-                type = nextSessionType
+            NextSessionSummary(
+                sessionName = nextSessionName,
+                day = nextSessionDay,
+                period = nextSessionPeriod,
+                track = nextSessionTrack,
+                group = nextSessionGroup,
             )
         } else null
 
+        val keyDates = runCatching {
+            gson.fromJson<List<KeyDateSummary>>(
+                keyDatesJson,
+                object : TypeToken<List<KeyDateSummary>>() {}.type,
+            ) ?: emptyList()
+        }.getOrElse { emptyList() }
+
         return LearnerOverviewResponse(
             programName = programName,
-            programStatus = programStatus,
-            completedSessions = completedSessions,
-            totalSessions = totalSessions,
-            nextSession = session
+            programType = programType,
+            applicationStatus = applicationStatus,
+            registrationStatus = registrationStatus,
+            nextSession = session,
+            keyDates = keyDates,
         )
     }
 }

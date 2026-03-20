@@ -40,7 +40,7 @@ class HomeRepositoryTest {
     @Test
     fun `getHomeData returns user and overview on success`() = runTest {
         val user = UserDto(id = "1", email = "t@tsin.ca", firstName = "Jane")
-        val overview = LearnerOverviewResponse(programName = "PRP", completedSessions = 3, totalSessions = 10)
+        val overview = LearnerOverviewResponse(programName = "PRP", programType = "PRP", applicationStatus = "Active", registrationStatus = "Registered")
         coEvery { userApi.getMe() } returns user
         coEvery { mobileApi.getOverview() } returns overview
 
@@ -87,16 +87,15 @@ class HomeRepositoryTest {
         coEvery { overviewDao.getOverview("default") } returns CachedOverview(
             userId = "default",
             programName = "Cached Program",
-            programStatus = "Active",
-            completedSessions = 5,
-            totalSessions = 20,
-            nextSessionId = null,
-            nextSessionTitle = null,
-            nextSessionDate = null,
-            nextSessionStartTime = null,
-            nextSessionEndTime = null,
-            nextSessionLocation = null,
-            nextSessionType = null,
+            programType = "PRP",
+            applicationStatus = "Active",
+            registrationStatus = "Registered",
+            nextSessionName = null,
+            nextSessionDay = null,
+            nextSessionPeriod = null,
+            nextSessionTrack = null,
+            nextSessionGroup = null,
+            keyDatesJson = "[]",
             cachedAt = System.currentTimeMillis()
         )
 

@@ -7,17 +7,12 @@ import androidx.room.PrimaryKey
 data class CachedScheduleDay(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val userId: String,
-    val date: String,
-    val dayName: String,
-    val sessionId: String,
-    val sessionTitle: String,
-    val sessionDate: String,
-    val sessionStartTime: String,
-    val sessionEndTime: String,
-    val sessionLocation: String?,
-    val sessionType: String?,
-    val weekStart: String?,
-    val weekEnd: String?,
+    val weekName: String,
+    val day: String,
+    val period: String,
+    val sessionName: String,
+    val track: String,
+    val group: String,
     val lastUpdated: String?,
     val cachedAt: Long = System.currentTimeMillis()
 )

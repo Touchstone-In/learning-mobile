@@ -9,7 +9,7 @@ import com.touchstoneinstitute.learningcompanion.data.local.entity.CachedSchedul
 
 @Database(
     entities = [CachedOverview::class, CachedScheduleDay::class],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {

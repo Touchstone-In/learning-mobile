@@ -19,6 +19,7 @@ import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -121,6 +122,9 @@ class SettingsViewModelTest {
         advanceUntilIdle()
 
         assertFalse(vm.uiState.value.pushEnabled)
+        assertEquals("Alert preferences updated.", vm.uiState.value.preferenceSuccessMessage)
+        assertNull(vm.uiState.value.preferenceErrorMessage)
+        assertFalse(vm.uiState.value.preferencesSaving)
         coVerify {
             mobileApi.updatePreferences(match { it.pushEnabled == false })
         }
@@ -145,5 +149,36 @@ class SettingsViewModelTest {
         coVerify {
             mobileApi.updatePreferences(match { it.scheduleReminders == false })
         }
+    }
+
+    @Test
+    fun `failed preference update restores server values and exposes error message`() = runTest {
+        coEvery { userApi.getMe() } returns UserDto(id = "u1")
+        coEvery { mobileApi.getPreferences() } returnsMany listOf(
+            NotificationPreferencesResponse(
+                pushEnabled = true,
+                scheduleReminders = true,
+                orientationReminders = true,
+            ),
+            NotificationPreferencesResponse(
+                pushEnabled = true,
+                scheduleReminders = true,
+                orientationReminders = true,
+            )
+        )
+        coEvery { mobileApi.updatePreferences(any()) } throws RuntimeException("write failed")
+
+        val vm = SettingsViewModel(userApi, mobileApi, authRepository)
+        advanceUntilIdle()
+
+        vm.toggleOrientationReminders(false)
+        advanceUntilIdle()
+
+        assertTrue(vm.uiState.value.orientationReminders)
+        assertFalse(vm.uiState.value.preferencesSaving)
+        assertNull(vm.uiState.value.preferenceSuccessMessage)
+        assertNotNull(vm.uiState.value.preferenceErrorMessage)
+        coVerify { mobileApi.updatePreferences(match { it.orientationReminders == false }) }
+        coVerify(exactly = 2) { mobileApi.getPreferences() }
     }
 }

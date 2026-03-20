@@ -7,16 +7,15 @@ import androidx.room.PrimaryKey
 data class CachedOverview(
     @PrimaryKey val userId: String,
     val programName: String?,
-    val programStatus: String?,
-    val completedSessions: Int,
-    val totalSessions: Int,
-    val nextSessionId: String?,
-    val nextSessionTitle: String?,
-    val nextSessionDate: String?,
-    val nextSessionStartTime: String?,
-    val nextSessionEndTime: String?,
-    val nextSessionLocation: String?,
-    val nextSessionType: String?,
+    val programType: String?,
+    val applicationStatus: String?,
+    val registrationStatus: String?,
+    val nextSessionName: String?,
+    val nextSessionDay: String?,
+    val nextSessionPeriod: String?,
+    val nextSessionTrack: String?,
+    val nextSessionGroup: String?,
+    val keyDatesJson: String,
     val cachedAt: Long = System.currentTimeMillis()
 )
 

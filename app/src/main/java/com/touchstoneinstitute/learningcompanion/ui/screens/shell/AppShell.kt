@@ -1,5 +1,10 @@
 package com.touchstoneinstitute.learningcompanion.ui.screens.shell
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.unit.dp
 import androidx.compose.material.icons.Icons
@@ -11,6 +16,8 @@ import androidx.compose.material.icons.outlined.CalendarMonth
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -51,17 +58,37 @@ private val navItems = listOf(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AppShell(onSignOut: () -> Unit, initialDeepLink: String? = null) {
+fun AppShell(
+    onSignOut: () -> Unit,
+    initialDeepLink: String? = null,
+    homeContent: @Composable (Modifier, () -> Unit) -> Unit = { modifier, onOpenSchedule ->
+        HomeScreen(modifier = modifier, onOpenSchedule = onOpenSchedule)
+    },
+    scheduleContent: @Composable (Modifier) -> Unit = { modifier ->
+        ScheduleScreen(modifier = modifier)
+    },
+    notificationsContent: @Composable (Modifier, () -> Unit) -> Unit = { modifier, onOpenSettings ->
+        NotificationsScreen(modifier = modifier, onOpenSettings = onOpenSettings)
+    },
+    settingsContent: @Composable (Modifier, () -> Unit) -> Unit = { modifier, onSignOutAction ->
+        SettingsScreen(modifier = modifier, onSignOut = onSignOutAction)
+    },
+) {
     // Resolve deep link target to a valid route, defaulting to Home
     val startRoute = when (initialDeepLink) {
         "schedule" -> Screen.Schedule.route
+        "alerts" -> Screen.Notifications.route
         "notifications" -> Screen.Notifications.route
         "settings" -> Screen.Settings.route
         "home" -> Screen.Home.route
         else -> Screen.Home.route
     }
     var currentRoute by rememberSaveable { mutableStateOf(startRoute) }
-    val currentTitle = navItems.find { it.screen.route == currentRoute }?.label ?: "TSIN Learning"
+    val currentTitle = when (currentRoute) {
+        Screen.Home.route -> "TSIN Learning"
+        else -> navItems.find { it.screen.route == currentRoute }?.label ?: "TSIN Learning"
+    }
+    val alertsBadgeCount = 0
 
     Scaffold(
         topBar = {
@@ -82,35 +109,74 @@ fun AppShell(onSignOut: () -> Unit, initialDeepLink: String? = null) {
         bottomBar = {
             ConsoleBottomNav(
                 currentRoute = currentRoute,
+                alertsBadgeCount = alertsBadgeCount,
                 onNavigate = { screen -> currentRoute = screen.route }
             )
         },
         containerColor = MaterialTheme.colorScheme.surfaceContainerLow
     ) { innerPadding ->
-        val modifier = Modifier.padding(innerPadding)
-        when (currentRoute) {
-            Screen.Home.route -> HomeScreen(modifier)
-            Screen.Schedule.route -> ScheduleScreen(modifier)
-            Screen.Notifications.route -> NotificationsScreen(modifier)
-            Screen.Settings.route -> SettingsScreen(modifier = modifier, onSignOut = onSignOut)
+        AnimatedContent(
+            targetState = currentRoute,
+            transitionSpec = {
+                fadeIn(animationSpec = tween(180)) togetherWith fadeOut(animationSpec = tween(120))
+            },
+            label = "Shell content",
+        ) { route ->
+            val modifier = Modifier.padding(innerPadding)
+            when (route) {
+                Screen.Home.route -> homeContent(
+                    modifier,
+                    { currentRoute = Screen.Schedule.route },
+                )
+                Screen.Schedule.route -> scheduleContent(modifier)
+                Screen.Notifications.route -> notificationsContent(
+                    modifier,
+                    { currentRoute = Screen.Settings.route },
+                )
+                Screen.Settings.route -> settingsContent(modifier, onSignOut)
+                else -> homeContent(
+                    modifier,
+                    { currentRoute = Screen.Schedule.route },
+                )
+            }
         }
     }
 }
 
 @Composable
-private fun ConsoleBottomNav(currentRoute: String, onNavigate: (Screen) -> Unit) {
+private fun ConsoleBottomNav(
+    currentRoute: String,
+    alertsBadgeCount: Int,
+    onNavigate: (Screen) -> Unit,
+) {
     NavigationBar(
         containerColor = MaterialTheme.colorScheme.surface,
         tonalElevation = 0.dp
     ) {
         navItems.forEach { item ->
             val selected = currentRoute == item.screen.route
+            val badgeCount = if (item.screen == Screen.Notifications) alertsBadgeCount else 0
             NavigationBarItem(
                 icon = {
-                    Icon(
-                        imageVector = if (selected) item.selectedIcon else item.unselectedIcon,
-                        contentDescription = item.label
-                    )
+                    if (badgeCount > 0) {
+                        BadgedBox(
+                            badge = {
+                                Badge {
+                                    Text(text = badgeCount.coerceAtMost(99).toString())
+                                }
+                            }
+                        ) {
+                            Icon(
+                                imageVector = if (selected) item.selectedIcon else item.unselectedIcon,
+                                contentDescription = item.label,
+                            )
+                        }
+                    } else {
+                        Icon(
+                            imageVector = if (selected) item.selectedIcon else item.unselectedIcon,
+                            contentDescription = item.label,
+                        )
+                    }
                 },
                 label = {
                     Text(

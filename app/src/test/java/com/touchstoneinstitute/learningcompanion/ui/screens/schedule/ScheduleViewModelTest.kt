@@ -1,9 +1,11 @@
 package com.touchstoneinstitute.learningcompanion.ui.screens.schedule
 
 import com.touchstoneinstitute.learningcompanion.data.remote.dto.ScheduleDay
+import com.touchstoneinstitute.learningcompanion.data.remote.dto.ScheduleEntry
 import com.touchstoneinstitute.learningcompanion.data.remote.dto.ScheduleResponse
-import com.touchstoneinstitute.learningcompanion.data.remote.dto.SessionSummary
+import com.touchstoneinstitute.learningcompanion.data.remote.dto.ScheduleWeek
 import com.touchstoneinstitute.learningcompanion.data.repository.AuthResult
+import com.touchstoneinstitute.learningcompanion.data.repository.ScheduleData
 import com.touchstoneinstitute.learningcompanion.data.repository.ScheduleRepository
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -40,25 +42,29 @@ class ScheduleViewModelTest {
     }
 
     @Test
-    fun `loads schedule on init with days and week label`() = runTest {
-        val sessions = listOf(
-            SessionSummary(id = "s1", title = "Clinical Skills", date = "2026-03-16",
-                startTime = "09:00", endTime = "12:00", location = "Room 204")
+    fun `loads schedule on init with weeks and week label`() = runTest {
+        val days = listOf(
+            ScheduleDay(
+                day = "Monday", period = "AM",
+                session = ScheduleEntry(sessionName = "Clinical Skills", track = "A", group = "1")
+            )
         )
-        val days = listOf(ScheduleDay(date = "2026-03-16", dayName = "Monday", sessions = sessions))
+        val weeks = listOf(ScheduleWeek(weekName = "Week 1", days = days))
         val response = ScheduleResponse(
-            weekStart = "Mar 16", weekEnd = "Mar 20",
-            days = days, lastUpdated = "2026-03-16T08:00:00Z"
+            lastUpdated = "2026-03-16T08:00:00Z",
+            weeks = weeks,
         )
-        coEvery { scheduleRepository.getSchedule() } returns AuthResult.Success(response)
+        coEvery { scheduleRepository.getSchedule() } returns AuthResult.Success(
+            ScheduleData(response = response)
+        )
 
         val vm = ScheduleViewModel(scheduleRepository)
         advanceUntilIdle()
 
         assertFalse(vm.uiState.value.isLoading)
-        assertEquals(1, vm.uiState.value.days.size)
-        assertEquals("Clinical Skills", vm.uiState.value.days[0].sessions[0].title)
-        assertEquals("Mar 16 — Mar 20", vm.uiState.value.weekLabel)
+        assertEquals(1, vm.uiState.value.weeks.size)
+        assertEquals("Clinical Skills", vm.uiState.value.weeks[0].days[0].session.sessionName)
+        assertEquals("Week 1", vm.uiState.value.weekLabel)
         assertNull(vm.uiState.value.errorMessage)
     }
 
@@ -71,45 +77,80 @@ class ScheduleViewModelTest {
 
         assertFalse(vm.uiState.value.isLoading)
         assertEquals("Failed to load schedule (500)", vm.uiState.value.errorMessage)
-        assertTrue(vm.uiState.value.days.isEmpty())
+        assertTrue(vm.uiState.value.weeks.isEmpty())
     }
 
     @Test
-    fun `empty schedule returns empty days list`() = runTest {
+    fun `empty schedule returns empty weeks list`() = runTest {
         coEvery { scheduleRepository.getSchedule() } returns AuthResult.Success(
-            ScheduleResponse(days = emptyList())
+            ScheduleData(response = ScheduleResponse(weeks = emptyList()))
         )
 
         val vm = ScheduleViewModel(scheduleRepository)
         advanceUntilIdle()
 
         assertFalse(vm.uiState.value.isLoading)
-        assertTrue(vm.uiState.value.days.isEmpty())
+        assertTrue(vm.uiState.value.weeks.isEmpty())
         assertNull(vm.uiState.value.weekLabel)
     }
 
     @Test
     fun `refresh reloads schedule`() = runTest {
         coEvery { scheduleRepository.getSchedule() } returns AuthResult.Success(
-            ScheduleResponse(days = emptyList())
+            ScheduleData(response = ScheduleResponse(weeks = emptyList()))
         )
 
         val vm = ScheduleViewModel(scheduleRepository)
         advanceUntilIdle()
-        assertTrue(vm.uiState.value.days.isEmpty())
+        assertTrue(vm.uiState.value.weeks.isEmpty())
 
-        val updatedDays = listOf(
-            ScheduleDay(date = "2026-03-17", dayName = "Tuesday", sessions = emptyList())
+        val updatedWeeks = listOf(
+            ScheduleWeek(
+                weekName = "Week 2",
+                days = listOf(
+                    ScheduleDay(
+                        day = "Tuesday", period = "PM",
+                        session = ScheduleEntry(sessionName = "Lab", track = "B", group = "2")
+                    )
+                )
+            )
         )
         coEvery { scheduleRepository.getSchedule() } returns AuthResult.Success(
-            ScheduleResponse(days = updatedDays)
+            ScheduleData(response = ScheduleResponse(weeks = updatedWeeks))
         )
 
         vm.loadSchedule()
         advanceUntilIdle()
 
-        assertEquals(1, vm.uiState.value.days.size)
-        assertEquals("Tuesday", vm.uiState.value.days[0].dayName)
+        assertEquals(1, vm.uiState.value.weeks.size)
+        assertEquals("Tuesday", vm.uiState.value.weeks[0].days[0].day)
+    }
+
+    @Test
+    fun `cached schedule result exposes offline flag`() = runTest {
+        val cachedWeeks = listOf(
+            ScheduleWeek(
+                weekName = "Week 3",
+                days = listOf(
+                    ScheduleDay(
+                        day = "Wednesday", period = "AM",
+                        session = ScheduleEntry(sessionName = "Orientation", track = "A", group = "1")
+                    )
+                )
+            )
+        )
+        coEvery { scheduleRepository.getSchedule() } returns AuthResult.Success(
+            ScheduleData(
+                response = ScheduleResponse(weeks = cachedWeeks),
+                isCached = true,
+            )
+        )
+
+        val vm = ScheduleViewModel(scheduleRepository)
+        advanceUntilIdle()
+
+        assertTrue(vm.uiState.value.isCached)
+        assertEquals("Orientation", vm.uiState.value.weeks.first().days.first().session.sessionName)
     }
 }
 

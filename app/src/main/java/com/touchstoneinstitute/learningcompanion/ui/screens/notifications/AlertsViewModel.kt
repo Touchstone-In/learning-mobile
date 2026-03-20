@@ -1,11 +1,10 @@
-package com.touchstoneinstitute.learningcompanion.ui.screens.home
+package com.touchstoneinstitute.learningcompanion.ui.screens.notifications
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.touchstoneinstitute.learningcompanion.data.remote.dto.LearnerOverviewResponse
-import com.touchstoneinstitute.learningcompanion.data.remote.dto.UserDto
+import com.touchstoneinstitute.learningcompanion.data.remote.dto.LearnerResultSummary
 import com.touchstoneinstitute.learningcompanion.data.repository.AuthResult
-import com.touchstoneinstitute.learningcompanion.data.repository.HomeRepository
+import com.touchstoneinstitute.learningcompanion.data.repository.ResultsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,47 +13,42 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-data class HomeUiState(
+data class AlertsUiState(
     val isLoading: Boolean = true,
     val isRefreshing: Boolean = false,
     val errorMessage: String? = null,
-    val user: UserDto? = null,
-    val overview: LearnerOverviewResponse? = null,
-    val isCached: Boolean = false,
+    val results: List<LearnerResultSummary> = emptyList(),
 )
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(
-    private val homeRepository: HomeRepository
+class AlertsViewModel @Inject constructor(
+    private val resultsRepository: ResultsRepository
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(HomeUiState())
-    val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(AlertsUiState())
+    val uiState: StateFlow<AlertsUiState> = _uiState.asStateFlow()
 
     init {
-        loadHome()
+        loadAlerts()
     }
 
-    fun loadHome() {
+    fun loadAlerts() {
         viewModelScope.launch {
             _uiState.update { current ->
-                val hasExistingContent = current.user != null || current.overview != null
+                val hasContent = current.results.isNotEmpty()
                 current.copy(
-                    isLoading = !hasExistingContent,
-                    isRefreshing = hasExistingContent,
+                    isLoading = !hasContent,
+                    isRefreshing = hasContent,
                     errorMessage = null,
                 )
             }
-            when (val result = homeRepository.getHomeData()) {
+            when (val result = resultsRepository.getReleasedResults()) {
                 is AuthResult.Success -> {
                     _uiState.update {
                         it.copy(
                             isLoading = false,
                             isRefreshing = false,
-                            errorMessage = null,
-                            user = result.data.user ?: it.user,
-                            overview = result.data.overview ?: it.overview,
-                            isCached = result.data.isCached,
+                            results = result.data.results,
                         )
                     }
                 }
@@ -67,13 +61,9 @@ class HomeViewModel @Inject constructor(
                         )
                     }
                 }
-                is AuthResult.MfaSetupRequired -> {
+                else -> {
                     _uiState.update {
-                        it.copy(
-                            isLoading = false,
-                            isRefreshing = false,
-                            errorMessage = "MFA setup required",
-                        )
+                        it.copy(isLoading = false, isRefreshing = false)
                     }
                 }
             }

@@ -23,7 +23,10 @@ data class SettingsUiState(
     val pushEnabled: Boolean = true,
     val scheduleReminders: Boolean = true,
     val orientationReminders: Boolean = true,
-    val preferencesLoading: Boolean = false
+    val preferencesLoading: Boolean = false,
+    val preferencesSaving: Boolean = false,
+    val preferenceSuccessMessage: String? = null,
+    val preferenceErrorMessage: String? = null,
 )
 
 @HiltViewModel
@@ -69,46 +72,101 @@ class SettingsViewModel @Inject constructor(
                         pushEnabled = prefs.pushEnabled,
                         scheduleReminders = prefs.scheduleReminders,
                         orientationReminders = prefs.orientationReminders,
-                        preferencesLoading = false
+                        preferencesLoading = false,
                     )
                 }
             } catch (e: Exception) {
                 Timber.w(e, "Failed to load notification preferences")
+                _uiState.update {
+                    it.copy(
+                        preferencesLoading = false,
+                        preferenceSuccessMessage = null,
+                        preferenceErrorMessage = it.preferenceErrorMessage
+                            ?: "We couldn’t refresh your alert preferences right now.",
+                    )
+                }
+            }
+        }
+    }
+
+    private fun restorePreferencesFromServer() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(preferencesLoading = true) }
+            try {
+                val prefs = mobileApi.getPreferences()
+                _uiState.update {
+                    it.copy(
+                        pushEnabled = prefs.pushEnabled,
+                        scheduleReminders = prefs.scheduleReminders,
+                        orientationReminders = prefs.orientationReminders,
+                        preferencesLoading = false,
+                    )
+                }
+            } catch (e: Exception) {
+                Timber.w(e, "Failed to restore notification preferences")
                 _uiState.update { it.copy(preferencesLoading = false) }
             }
         }
     }
 
     fun togglePushEnabled(enabled: Boolean) {
-        _uiState.update { it.copy(pushEnabled = enabled) }
+        _uiState.update {
+            it.copy(
+                pushEnabled = enabled,
+                preferenceSuccessMessage = null,
+                preferenceErrorMessage = null,
+            )
+        }
         updateRemotePreferences(UpdatePreferencesRequest(pushEnabled = enabled))
     }
 
     fun toggleScheduleReminders(enabled: Boolean) {
-        _uiState.update { it.copy(scheduleReminders = enabled) }
+        _uiState.update {
+            it.copy(
+                scheduleReminders = enabled,
+                preferenceSuccessMessage = null,
+                preferenceErrorMessage = null,
+            )
+        }
         updateRemotePreferences(UpdatePreferencesRequest(scheduleReminders = enabled))
     }
 
     fun toggleOrientationReminders(enabled: Boolean) {
-        _uiState.update { it.copy(orientationReminders = enabled) }
+        _uiState.update {
+            it.copy(
+                orientationReminders = enabled,
+                preferenceSuccessMessage = null,
+                preferenceErrorMessage = null,
+            )
+        }
         updateRemotePreferences(UpdatePreferencesRequest(orientationReminders = enabled))
     }
 
     private fun updateRemotePreferences(request: UpdatePreferencesRequest) {
         viewModelScope.launch {
+            _uiState.update { it.copy(preferencesSaving = true) }
             try {
                 val updated = mobileApi.updatePreferences(request)
                 _uiState.update {
                     it.copy(
                         pushEnabled = updated.pushEnabled,
                         scheduleReminders = updated.scheduleReminders,
-                        orientationReminders = updated.orientationReminders
+                        orientationReminders = updated.orientationReminders,
+                        preferencesSaving = false,
+                        preferenceSuccessMessage = "Alert preferences updated.",
+                        preferenceErrorMessage = null,
                     )
                 }
             } catch (e: Exception) {
                 Timber.w(e, "Failed to update notification preferences")
-                // Reload to get the actual server state
-                loadPreferences()
+                _uiState.update {
+                    it.copy(
+                        preferencesSaving = false,
+                        preferenceSuccessMessage = null,
+                        preferenceErrorMessage = "Couldn’t save alert preferences. Restoring your last saved settings.",
+                    )
+                }
+                restorePreferencesFromServer()
             }
         }
     }

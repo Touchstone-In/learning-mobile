@@ -2,7 +2,7 @@ package com.touchstoneinstitute.learningcompanion.ui.screens.schedule
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.touchstoneinstitute.learningcompanion.data.remote.dto.ScheduleDay
+import com.touchstoneinstitute.learningcompanion.data.remote.dto.ScheduleWeek
 import com.touchstoneinstitute.learningcompanion.data.repository.AuthResult
 import com.touchstoneinstitute.learningcompanion.data.repository.ScheduleRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,10 +15,12 @@ import javax.inject.Inject
 
 data class ScheduleUiState(
     val isLoading: Boolean = true,
+    val isRefreshing: Boolean = false,
     val errorMessage: String? = null,
-    val days: List<ScheduleDay> = emptyList(),
+    val weeks: List<ScheduleWeek> = emptyList(),
     val weekLabel: String? = null,
-    val lastUpdated: String? = null
+    val lastUpdated: String? = null,
+    val isCached: Boolean = false,
 )
 
 @HiltViewModel
@@ -35,30 +37,45 @@ class ScheduleViewModel @Inject constructor(
 
     fun loadSchedule() {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+            _uiState.update { current ->
+                val hasContent = current.weeks.isNotEmpty()
+                current.copy(
+                    isLoading = !hasContent,
+                    isRefreshing = hasContent,
+                    errorMessage = null,
+                )
+            }
             when (val result = scheduleRepository.getSchedule()) {
                 is AuthResult.Success -> {
-                    val data = result.data
-                    val weekLabel = if (data.weekStart != null && data.weekEnd != null) {
-                        "${data.weekStart} — ${data.weekEnd}"
-                    } else null
+                    val data = result.data.response
+                    val weekLabel = data.weeks.firstOrNull()?.weekName
                     _uiState.update {
                         it.copy(
                             isLoading = false,
-                            days = data.days,
+                            isRefreshing = false,
+                            weeks = data.weeks,
                             weekLabel = weekLabel,
-                            lastUpdated = data.lastUpdated
+                            lastUpdated = data.lastUpdated,
+                            isCached = result.data.isCached,
                         )
                     }
                 }
                 is AuthResult.Error -> {
                     _uiState.update {
-                        it.copy(isLoading = false, errorMessage = result.message)
+                        it.copy(
+                            isLoading = false,
+                            isRefreshing = false,
+                            errorMessage = result.message,
+                        )
                     }
                 }
                 is AuthResult.MfaSetupRequired -> {
                     _uiState.update {
-                        it.copy(isLoading = false, errorMessage = "MFA setup required")
+                        it.copy(
+                            isLoading = false,
+                            isRefreshing = false,
+                            errorMessage = "MFA setup required",
+                        )
                     }
                 }
             }
