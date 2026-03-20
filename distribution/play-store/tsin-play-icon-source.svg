@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="Touchstone Institute Learning Companion app icon source">
+  <rect width="512" height="512" fill="#002D74"/>
+  <circle cx="256" cy="224" r="176" fill="#1A4A8A"/>
+  <rect x="142" y="92" width="228" height="50" rx="25" fill="#FFFFFF"/>
+  <rect x="232" y="92" width="48" height="194" rx="24" fill="#FFFFFF"/>
+  <polygon points="132,196 228,164 228,326 132,296" fill="#FFFFFF"/>
+  <polygon points="380,196 284,164 284,326 380,296" fill="#FFFFFF"/>
+  <rect x="239" y="104" width="34" height="160" rx="17" fill="#B5BE00"/>
+  <polygon points="239,264 273,264 256,288" fill="#B5BE00"/>
+  <text x="256" y="364" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="40" font-weight="700" fill="#FFFFFF">Learning</text>
+  <text x="256" y="424" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="38" font-weight="700" fill="#FFFFFF">Companion</text>
+  <rect x="146" y="454" width="220" height="12" rx="6" fill="#B5BE00"/>
+</svg>
+

@@ -17,5 +17,6 @@
     <string name="error_network">Network error. Please check your connection.</string>
     <string name="action_retry">Retry</string>
     <string name="action_sign_out">Sign Out</string>
+    <string name="startup_loader_tagline">Learning Companion</string>
 </resources>
 

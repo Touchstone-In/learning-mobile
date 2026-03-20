@@ -181,6 +181,15 @@ jobs:
           echo "Prepared release notes:" >> $GITHUB_STEP_SUMMARY
           echo "$NOTES_CONTENT" >> $GITHUB_STEP_SUMMARY
 
+      - name: Upload Play Store branding assets
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: staging-play-store-assets
+          path: distribution/play-store/
+          if-no-files-found: error
+          retention-days: 30
+
       - name: Upload to Play Store (internal testing) with debug symbols
         if: success() && steps.debug_symbols.outputs.found == 'true'
         uses: r0adkll/upload-google-play@v1
@@ -321,6 +330,15 @@ jobs:
 
           echo "Prepared release notes:" >> $GITHUB_STEP_SUMMARY
           echo "$NOTES_CONTENT" >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload Play Store branding assets
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-play-store-assets
+          path: distribution/play-store/
+          if-no-files-found: error
+          retention-days: 30
 
       - name: Upload to Play Store (production) with debug symbols
         if: success() && steps.debug_symbols.outputs.found == 'true'

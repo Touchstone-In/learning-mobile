@@ -4,6 +4,7 @@ import androidx.compose.ui.graphics.Color
 
 // Touchstone Institute brand palette
 val TsinNavy = Color(0xFF002D74)
+val TsinLime = Color(0xFFB5BE00)
 val TsinNavyLight = Color(0xFF1A4A8A)
 val TsinNavyDark = Color(0xFF001B4D)
 
