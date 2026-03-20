@@ -136,22 +136,70 @@ jobs:
           path: app/build/outputs/bundle/release/*.aab
           retention-days: 30
 
-      - name: Upload native debug symbols artifact
+      - name: Detect native debug symbols
         if: success()
+        id: debug_symbols
+        shell: bash
+        run: |
+          shopt -s nullglob
+          files=(app/build/outputs/native-debug-symbols/release/*.zip)
+
+          if [ ${#files[@]} -gt 0 ]; then
+            echo "found=true" >> "$GITHUB_OUTPUT"
+            echo "path=${files[0]}" >> "$GITHUB_OUTPUT"
+            echo "Native debug symbols: ${files[0]}" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "found=false" >> "$GITHUB_OUTPUT"
+            echo "Native debug symbols: none generated for this build" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upload native debug symbols artifact
+        if: success() && steps.debug_symbols.outputs.found == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: staging-native-debug-symbols
-          path: app/build/outputs/native-debug-symbols/release/*.zip
+          path: ${{ steps.debug_symbols.outputs.path }}
           retention-days: 30
 
-      - name: Upload to Play Store (internal testing)
+      - name: Prepare Play release notes
         if: success()
+        shell: bash
+        run: |
+          mkdir -p distribution/whatsnew
+          NOTES_FILE="distribution/whatsnew/whatsnew-en-US"
+
+          if [ -s "$NOTES_FILE" ]; then
+            NOTES_CONTENT=$(cat "$NOTES_FILE")
+          else
+            NOTES_CONTENT=$(git log -1 --pretty=%s)
+          fi
+
+          NOTES_CONTENT=$(printf '%s' "$NOTES_CONTENT" | tr '\n' ' ' | sed 's/[[:space:]]\+/ /g' | sed 's/^ //; s/ $//')
+          NOTES_CONTENT=${NOTES_CONTENT:0:500}
+          printf '%s\n' "$NOTES_CONTENT" > "$NOTES_FILE"
+
+          echo "Prepared release notes:" >> $GITHUB_STEP_SUMMARY
+          echo "$NOTES_CONTENT" >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload to Play Store (internal testing) with debug symbols
+        if: success() && steps.debug_symbols.outputs.found == 'true'
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
           packageName: com.touchstoneinstitute.learningcompanion
           releaseFiles: app/build/outputs/bundle/release/*.aab
-          debugSymbols: app/build/outputs/native-debug-symbols/release/*.zip
+          debugSymbols: ${{ steps.debug_symbols.outputs.path }}
+          track: internal
+          status: draft
+          whatsNewDirectory: distribution/whatsnew
+
+      - name: Upload to Play Store (internal testing) without debug symbols
+        if: success() && steps.debug_symbols.outputs.found != 'true'
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: com.touchstoneinstitute.learningcompanion
+          releaseFiles: app/build/outputs/bundle/release/*.aab
           track: internal
           status: draft
           whatsNewDirectory: distribution/whatsnew
@@ -229,22 +277,70 @@ jobs:
           path: app/build/outputs/bundle/release/*.aab
           retention-days: 30
 
-      - name: Upload native debug symbols artifact
+      - name: Detect native debug symbols
         if: success()
+        id: debug_symbols
+        shell: bash
+        run: |
+          shopt -s nullglob
+          files=(app/build/outputs/native-debug-symbols/release/*.zip)
+
+          if [ ${#files[@]} -gt 0 ]; then
+            echo "found=true" >> "$GITHUB_OUTPUT"
+            echo "path=${files[0]}" >> "$GITHUB_OUTPUT"
+            echo "Native debug symbols: ${files[0]}" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "found=false" >> "$GITHUB_OUTPUT"
+            echo "Native debug symbols: none generated for this build" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upload native debug symbols artifact
+        if: success() && steps.debug_symbols.outputs.found == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: release-native-debug-symbols
-          path: app/build/outputs/native-debug-symbols/release/*.zip
+          path: ${{ steps.debug_symbols.outputs.path }}
           retention-days: 30
 
-      - name: Upload to Play Store (production)
+      - name: Prepare Play release notes
         if: success()
+        shell: bash
+        run: |
+          mkdir -p distribution/whatsnew
+          NOTES_FILE="distribution/whatsnew/whatsnew-en-US"
+
+          if [ -s "$NOTES_FILE" ]; then
+            NOTES_CONTENT=$(cat "$NOTES_FILE")
+          else
+            NOTES_CONTENT=$(git log -1 --pretty=%s)
+          fi
+
+          NOTES_CONTENT=$(printf '%s' "$NOTES_CONTENT" | tr '\n' ' ' | sed 's/[[:space:]]\+/ /g' | sed 's/^ //; s/ $//')
+          NOTES_CONTENT=${NOTES_CONTENT:0:500}
+          printf '%s\n' "$NOTES_CONTENT" > "$NOTES_FILE"
+
+          echo "Prepared release notes:" >> $GITHUB_STEP_SUMMARY
+          echo "$NOTES_CONTENT" >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload to Play Store (production) with debug symbols
+        if: success() && steps.debug_symbols.outputs.found == 'true'
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
           packageName: com.touchstoneinstitute.learningcompanion
           releaseFiles: app/build/outputs/bundle/release/*.aab
-          debugSymbols: app/build/outputs/native-debug-symbols/release/*.zip
+          debugSymbols: ${{ steps.debug_symbols.outputs.path }}
+          track: production
+          status: draft
+          whatsNewDirectory: distribution/whatsnew
+
+      - name: Upload to Play Store (production) without debug symbols
+        if: success() && steps.debug_symbols.outputs.found != 'true'
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: com.touchstoneinstitute.learningcompanion
+          releaseFiles: app/build/outputs/bundle/release/*.aab
           track: production
           status: draft
           whatsNewDirectory: distribution/whatsnew
