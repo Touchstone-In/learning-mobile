@@ -285,6 +285,15 @@ jobs:
           echo "Prepared release notes:" >> $GITHUB_STEP_SUMMARY
           echo "$NOTES_CONTENT" >> $GITHUB_STEP_SUMMARY
 
+      - name: Prepare Play Store icon for listing upload
+        if: success()
+        shell: bash
+        run: |
+          # r0adkll/upload-google-play expects imageDirectory/<locale>/<imageType>/*.png
+          mkdir -p distribution/play-store/listings/en-US/icon
+          cp distribution/play-store/tsin-play-icon-512.png \
+             distribution/play-store/listings/en-US/icon/icon.png
+
       - name: Upload Play Store branding assets
         if: success()
         uses: actions/upload-artifact@v4
@@ -305,6 +314,7 @@ jobs:
           track: internal
           status: draft
           whatsNewDirectory: distribution/whatsnew
+          imageDirectory: distribution/play-store/listings
 
       - name: Upload to Play Store (internal testing) without debug symbols
         if: success() && steps.debug_symbols.outputs.found != 'true'
@@ -316,6 +326,7 @@ jobs:
           track: internal
           status: draft
           whatsNewDirectory: distribution/whatsnew
+          imageDirectory: distribution/play-store/listings
 
       - name: Release summary
         if: always()
@@ -435,6 +446,15 @@ jobs:
           echo "Prepared release notes:" >> $GITHUB_STEP_SUMMARY
           echo "$NOTES_CONTENT" >> $GITHUB_STEP_SUMMARY
 
+      - name: Prepare Play Store icon for listing upload
+        if: success()
+        shell: bash
+        run: |
+          # r0adkll/upload-google-play expects imageDirectory/<locale>/<imageType>/*.png
+          mkdir -p distribution/play-store/listings/en-US/icon
+          cp distribution/play-store/tsin-play-icon-512.png \
+             distribution/play-store/listings/en-US/icon/icon.png
+
       - name: Upload Play Store branding assets
         if: success()
         uses: actions/upload-artifact@v4
@@ -455,6 +475,7 @@ jobs:
           track: production
           status: draft
           whatsNewDirectory: distribution/whatsnew
+          imageDirectory: distribution/play-store/listings
 
       - name: Upload to Play Store (production) without debug symbols
         if: success() && steps.debug_symbols.outputs.found != 'true'
@@ -466,6 +487,7 @@ jobs:
           track: production
           status: draft
           whatsNewDirectory: distribution/whatsnew
+          imageDirectory: distribution/play-store/listings
 
       - name: Release summary
         if: always()
