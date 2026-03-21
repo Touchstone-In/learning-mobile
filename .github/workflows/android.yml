@@ -61,7 +61,10 @@ jobs:
           if [ -n "$GOOGLE_SERVICES_JSON" ]; then
             echo "$GOOGLE_SERVICES_JSON" | base64 -d > app/google-services.json
           else
-            echo "Using placeholder google-services.json"
+            echo "GOOGLE_SERVICES_JSON secret not set — writing placeholder"
+            cat > app/google-services.json << 'EOF'
+          {"project_info":{"project_number":"000000000000","project_id":"placeholder-project","storage_bucket":"placeholder-project.appspot.com"},"client":[{"client_info":{"mobilesdk_app_id":"1:000000000000:android:0000000000000000","android_client_info":{"package_name":"com.touchstoneinstitute.learningcompanion"}},"oauth_client":[],"api_key":[{"current_key":"placeholder"}],"services":{"appinvite_service":{"other_platform_oauth_client":[]}}}],"configuration_version":"1"}
+          EOF
           fi
 
       - name: Run unit tests and assemble debug test artifacts
@@ -140,7 +143,10 @@ jobs:
           if [ -n "$GOOGLE_SERVICES_JSON" ]; then
             echo "$GOOGLE_SERVICES_JSON" | base64 -d > app/google-services.json
           else
-            echo "Using placeholder google-services.json"
+            echo "GOOGLE_SERVICES_JSON secret not set — writing placeholder"
+            cat > app/google-services.json << 'EOF'
+          {"project_info":{"project_number":"000000000000","project_id":"placeholder-project","storage_bucket":"placeholder-project.appspot.com"},"client":[{"client_info":{"mobilesdk_app_id":"1:000000000000:android:0000000000000000","android_client_info":{"package_name":"com.touchstoneinstitute.learningcompanion"}},"oauth_client":[],"api_key":[{"current_key":"placeholder"}],"services":{"appinvite_service":{"other_platform_oauth_client":[]}}}],"configuration_version":"1"}
+          EOF
           fi
 
       - name: Enable KVM
@@ -212,7 +218,10 @@ jobs:
           if [ -n "$GOOGLE_SERVICES_JSON" ]; then
             echo "$GOOGLE_SERVICES_JSON" | base64 -d > app/google-services.json
           else
-            echo "Using placeholder google-services.json"
+            echo "GOOGLE_SERVICES_JSON secret not set — writing placeholder"
+            cat > app/google-services.json << 'EOF'
+          {"project_info":{"project_number":"000000000000","project_id":"placeholder-project","storage_bucket":"placeholder-project.appspot.com"},"client":[{"client_info":{"mobilesdk_app_id":"1:000000000000:android:0000000000000000","android_client_info":{"package_name":"com.touchstoneinstitute.learningcompanion"}},"oauth_client":[],"api_key":[{"current_key":"placeholder"}],"services":{"appinvite_service":{"other_platform_oauth_client":[]}}}],"configuration_version":"1"}
+          EOF
           fi
 
       - name: Decode keystore
@@ -373,7 +382,10 @@ jobs:
           if [ -n "$GOOGLE_SERVICES_JSON" ]; then
             echo "$GOOGLE_SERVICES_JSON" | base64 -d > app/google-services.json
           else
-            echo "Using placeholder google-services.json"
+            echo "GOOGLE_SERVICES_JSON secret not set — writing placeholder"
+            cat > app/google-services.json << 'EOF'
+          {"project_info":{"project_number":"000000000000","project_id":"placeholder-project","storage_bucket":"placeholder-project.appspot.com"},"client":[{"client_info":{"mobilesdk_app_id":"1:000000000000:android:0000000000000000","android_client_info":{"package_name":"com.touchstoneinstitute.learningcompanion"}},"oauth_client":[],"api_key":[{"current_key":"placeholder"}],"services":{"appinvite_service":{"other_platform_oauth_client":[]}}}],"configuration_version":"1"}
+          EOF
           fi
 
       - name: Decode keystore
