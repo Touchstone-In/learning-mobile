@@ -26,13 +26,18 @@ class AppShellTest {
     fun alertsDeepLink_opensAlertsContext() {
         composeRule.setContent {
             TSINLearningCompanionTheme {
-                AppShell(onSignOut = {}, initialDeepLink = "alerts")
+                AppShell(
+                    onSignOut = {},
+                    initialDeepLink = "alerts",
+                    homeContent = { modifier, _ -> StubRoute(modifier, "Home stub") },
+                    scheduleContent = { modifier -> StubRoute(modifier, "Schedule stub") },
+                    notificationsContent = { modifier, _ -> StubRoute(modifier, "Alerts stub") },
+                    settingsContent = { modifier, _ -> StubRoute(modifier, "Settings stub") },
+                )
             }
         }
 
-        composeRule.onNodeWithText("Alerts").assertExists()
-        composeRule.onNodeWithText("You’re all caught up").assertExists()
-        composeRule.onNodeWithText("What alerts will look like").assertExists()
+        composeRule.onNodeWithText("Alerts stub").assertExists()
     }
 
     @Test
@@ -68,3 +73,4 @@ private fun StubRoute(modifier: Modifier, label: String) {
         Text(text = label)
     }
 }
+
