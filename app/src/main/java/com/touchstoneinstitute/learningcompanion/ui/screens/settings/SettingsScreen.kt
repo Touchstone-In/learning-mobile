@@ -1,4 +1,4 @@
-package com.touchstoneinstitute.learningcompanion.ui.screens.settings
+﻿package com.touchstoneinstitute.learningcompanion.ui.screens.settings
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -35,7 +35,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.touchstoneinstitute.learningcompanion.BuildConfig
 import com.touchstoneinstitute.learningcompanion.ui.components.GuidanceBanner
 import com.touchstoneinstitute.learningcompanion.ui.components.GuidanceSectionCard
-import com.touchstoneinstitute.learningcompanion.ui.components.GuidanceSectionHeader
 import com.touchstoneinstitute.learningcompanion.ui.components.GuidanceTone
 import com.touchstoneinstitute.learningcompanion.ui.theme.spacing
 import kotlinx.coroutines.launch
@@ -67,11 +66,6 @@ fun SettingsScreen(
         } else {
             "Learner"
         }
-
-        GuidanceSectionHeader(
-            title = "Settings",
-            supportingText = "Manage alerts, support resources, and account details.",
-        )
 
         GuidanceSectionCard(
             title = "Account",
@@ -116,7 +110,7 @@ fun SettingsScreen(
 
             uiState.preferenceErrorMessage?.let {
                 GuidanceBanner(
-                    title = "Couldn’t save changes",
+                    title = if (uiState.isPreferenceLoadError) "Couldn’t load preferences" else "Couldn’t save changes",
                     message = it,
                     tone = GuidanceTone.Critical,
                 )

@@ -8,13 +8,13 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.unit.dp
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Assessment
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.Assessment
 import androidx.compose.material.icons.outlined.CalendarMonth
 import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
@@ -52,7 +52,7 @@ data class NavItem(
 private val navItems = listOf(
     NavItem(Screen.Home, "Home", Icons.Filled.Home, Icons.Outlined.Home),
     NavItem(Screen.Schedule, "Schedule", Icons.Filled.CalendarMonth, Icons.Outlined.CalendarMonth),
-    NavItem(Screen.Notifications, "Alerts", Icons.Filled.Notifications, Icons.Outlined.Notifications),
+    NavItem(Screen.Notifications, "Results", Icons.Filled.Assessment, Icons.Outlined.Assessment),
     NavItem(Screen.Settings, "Settings", Icons.Filled.Settings, Icons.Outlined.Settings),
 )
 

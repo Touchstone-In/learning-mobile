@@ -28,7 +28,14 @@ class ScheduleRepository @Inject constructor(
             cacheSchedule(schedule)
             AuthResult.Success(ScheduleData(response = schedule))
         } catch (e: retrofit2.HttpException) {
-            tryFallbackFromCache("Failed to load schedule (${e.code()})", e)
+            val message = when (e.code()) {
+                401 -> "Your session has expired. Please sign out and sign in again."
+                403 -> "You don't have permission to view the schedule."
+                404 -> "Your schedule hasn't been published yet. Check back soon."
+                500, 502, 503 -> "The server encountered an error. Please try again later."
+                else -> "Something went wrong loading your schedule."
+            }
+            tryFallbackFromCache(message, e)
         } catch (e: java.io.IOException) {
             tryFallbackFromCache("Network error. Please check your connection.", e)
         } catch (e: Exception) {

@@ -39,7 +39,14 @@ class HomeRepository @Inject constructor(
             }
             AuthResult.Success(HomeData(user = user, overview = overview))
         } catch (e: retrofit2.HttpException) {
-            tryFallbackFromCache("Failed to load home data (${e.code()})", e)
+            val message = when (e.code()) {
+                401 -> "Your session has expired. Please sign out and sign in again."
+                403 -> "You don't have permission to view this content."
+                404 -> "Your account details could not be found."
+                500, 502, 503 -> "The server encountered an error. Please try again later."
+                else -> "Something went wrong loading your overview."
+            }
+            tryFallbackFromCache(message, e)
         } catch (e: java.io.IOException) {
             tryFallbackFromCache("Network error. Please check your connection.", e)
         } catch (e: Exception) {

@@ -60,19 +60,19 @@ fun NotificationsScreen(
         verticalArrangement = Arrangement.spacedBy(spacing.md),
     ) {
         GuidanceSectionHeader(
-            title = "Alerts",
+            title = "Your results",
             supportingText = if (uiState.isRefreshing) "Refreshing…"
-                else "Results, reminders, and important updates.",
+                else "Published results and program updates.",
             action = {
                 IconButton(onClick = viewModel::loadAlerts) {
-                    Icon(Icons.Outlined.Refresh, contentDescription = "Refresh alerts")
+                    Icon(Icons.Outlined.Refresh, contentDescription = "Refresh results")
                 }
             },
         )
 
         uiState.errorMessage?.let { error ->
             GuidanceBanner(
-                title = "Couldn't load alerts",
+                title = "Couldn't load results",
                 message = error,
                 tone = GuidanceTone.Warning,
             )
@@ -80,7 +80,7 @@ fun NotificationsScreen(
 
         when {
             uiState.isLoading -> {
-                GuidanceLoadingState(message = "Loading your alerts\u2026")
+                GuidanceLoadingState(message = "Loading your results…")
             }
             uiState.results.isEmpty() && uiState.errorMessage == null -> {
                 GuidanceStatePanel(

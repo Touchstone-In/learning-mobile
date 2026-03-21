@@ -1,4 +1,4 @@
-package com.touchstoneinstitute.learningcompanion.ui.screens.settings
+﻿package com.touchstoneinstitute.learningcompanion.ui.screens.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -27,6 +27,8 @@ data class SettingsUiState(
     val preferencesSaving: Boolean = false,
     val preferenceSuccessMessage: String? = null,
     val preferenceErrorMessage: String? = null,
+    /** True when the error came from loading preferences (as opposed to saving them). */
+    val isPreferenceLoadError: Boolean = false,
 )
 
 @HiltViewModel
@@ -81,13 +83,14 @@ class SettingsViewModel @Inject constructor(
                     it.copy(
                         preferencesLoading = false,
                         preferenceSuccessMessage = null,
-                        preferenceErrorMessage = it.preferenceErrorMessage
-                            ?: "We couldn’t refresh your alert preferences right now.",
+                        preferenceErrorMessage = "We couldn't load your alert preferences right now.",
+                        isPreferenceLoadError = true,
                     )
                 }
             }
         }
     }
+
 
     private fun restorePreferencesFromServer() {
         viewModelScope.launch {
@@ -115,6 +118,7 @@ class SettingsViewModel @Inject constructor(
                 pushEnabled = enabled,
                 preferenceSuccessMessage = null,
                 preferenceErrorMessage = null,
+                isPreferenceLoadError = false,
             )
         }
         updateRemotePreferences(UpdatePreferencesRequest(pushEnabled = enabled))
@@ -126,6 +130,7 @@ class SettingsViewModel @Inject constructor(
                 scheduleReminders = enabled,
                 preferenceSuccessMessage = null,
                 preferenceErrorMessage = null,
+                isPreferenceLoadError = false,
             )
         }
         updateRemotePreferences(UpdatePreferencesRequest(scheduleReminders = enabled))
@@ -137,6 +142,7 @@ class SettingsViewModel @Inject constructor(
                 orientationReminders = enabled,
                 preferenceSuccessMessage = null,
                 preferenceErrorMessage = null,
+                isPreferenceLoadError = false,
             )
         }
         updateRemotePreferences(UpdatePreferencesRequest(orientationReminders = enabled))
@@ -163,7 +169,7 @@ class SettingsViewModel @Inject constructor(
                     it.copy(
                         preferencesSaving = false,
                         preferenceSuccessMessage = null,
-                        preferenceErrorMessage = "Couldn’t save alert preferences. Restoring your last saved settings.",
+                        preferenceErrorMessage = "Couldnâ€™t save alert preferences. Restoring your last saved settings.",
                     )
                 }
                 restorePreferencesFromServer()
