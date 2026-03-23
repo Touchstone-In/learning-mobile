@@ -54,8 +54,7 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
             signingConfig = signingConfigs.getByName("release")
-            // Use the correct learning backend — same as debug/staging until a dedicated prod URL is provisioned
-            buildConfigField("String", "API_BASE_URL", "\"https://learndev-be.tsin.ca/api/\"")
+            buildConfigField("String", "API_BASE_URL", "\"https://learn-be.tsin.ca/api/\"")
             buildConfigField("String", "AUTH_BASE_URL", "\"https://zxkbbj3pcy.us-east-1.awsapprunner.com/api/\"")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
