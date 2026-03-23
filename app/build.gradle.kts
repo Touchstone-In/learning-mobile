@@ -39,14 +39,15 @@ android {
     buildTypes {
         debug {
             isDebuggable = true
-            buildConfigField("String", "API_BASE_URL", "\"http://Learning-test-backend-env-1.eba-hkppfpig.ca-central-1.elasticbeanstalk.com/api/\"")
+            // learning-mobile-2026 branch → CodePipeline → learndev-be.tsin.ca
+            buildConfigField("String", "API_BASE_URL", "\"https://learndev-be.tsin.ca/api/\"")
             buildConfigField("String", "AUTH_BASE_URL", "\"https://zxkbbj3pcy.us-east-1.awsapprunner.com/api/\"")
         }
         create("staging") {
             initWith(getByName("debug"))
             isDebuggable = true
-            // learning-backend-2026 GitHub Actions deployment
-            buildConfigField("String", "API_BASE_URL", "\"http://Learning-test-backend-env-1.eba-hkppfpig.ca-central-1.elasticbeanstalk.com/api/\"")
+            // learning-mobile-2026 branch → CodePipeline → learndev-be.tsin.ca
+            buildConfigField("String", "API_BASE_URL", "\"https://learndev-be.tsin.ca/api/\"")
             buildConfigField("String", "AUTH_BASE_URL", "\"https://zxkbbj3pcy.us-east-1.awsapprunner.com/api/\"")
             matchingFallbacks += listOf("debug")
         }
