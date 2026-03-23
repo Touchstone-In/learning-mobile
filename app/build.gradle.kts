@@ -39,14 +39,14 @@ android {
     buildTypes {
         debug {
             isDebuggable = true
-            buildConfigField("String", "API_BASE_URL", "\"https://learndev-be.tsin.ca/api/\"")
+            buildConfigField("String", "API_BASE_URL", "\"http://Learning-test-backend-env-1.eba-hkppfpig.ca-central-1.elasticbeanstalk.com/api/\"")
             buildConfigField("String", "AUTH_BASE_URL", "\"https://zxkbbj3pcy.us-east-1.awsapprunner.com/api/\"")
         }
         create("staging") {
             initWith(getByName("debug"))
             isDebuggable = true
-            // Use same backend as debug for now — update after CDK deploy with actual DNS
-            buildConfigField("String", "API_BASE_URL", "\"https://learndev-be.tsin.ca/api/\"")
+            // learning-backend-2026 GitHub Actions deployment
+            buildConfigField("String", "API_BASE_URL", "\"http://Learning-test-backend-env-1.eba-hkppfpig.ca-central-1.elasticbeanstalk.com/api/\"")
             buildConfigField("String", "AUTH_BASE_URL", "\"https://zxkbbj3pcy.us-east-1.awsapprunner.com/api/\"")
             matchingFallbacks += listOf("debug")
         }
