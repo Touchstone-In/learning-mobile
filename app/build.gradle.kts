@@ -46,10 +46,20 @@ android {
         create("staging") {
             initWith(getByName("debug"))
             isDebuggable = true
-            // learning-mobile-2026 branch → CodePipeline → learn-test-be.tsin.ca
+            isMinifyEnabled = true
+            isShrinkResources = true
+            signingConfig = signingConfigs.getByName("release")
+            // Test backend: learn-test-be.tsin.ca (learning-mobile-2026 branch via CodePipeline)
             buildConfigField("String", "API_BASE_URL", "\"https://learn-test-be.tsin.ca/api/\"")
             buildConfigField("String", "AUTH_BASE_URL", "\"https://zxkbbj3pcy.us-east-1.awsapprunner.com/api/\"")
             matchingFallbacks += listOf("debug")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+            ndk {
+                debugSymbolLevel = "FULL"
+            }
         }
         release {
             isMinifyEnabled = true
