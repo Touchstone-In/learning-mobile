@@ -1,0 +1,57 @@
+{
+  "cli": {
+    "version": ">= 10.0.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "ios": {
+        "simulator": true
+      },
+      "env": {
+        "EXPO_PUBLIC_AUTH_BASE_URL": "https://zxkbbj3pcy.us-east-1.awsapprunner.com/api",
+        "EXPO_PUBLIC_BACKEND_BASE_URL": "https://learn-test-be.tsin.ca/api"
+      }
+    },
+    "staging": {
+      "distribution": "internal",
+      "ios": {
+        "simulator": false
+      },
+      "env": {
+        "EXPO_PUBLIC_AUTH_BASE_URL": "https://zxkbbj3pcy.us-east-1.awsapprunner.com/api",
+        "EXPO_PUBLIC_BACKEND_BASE_URL": "https://learn-test-be.tsin.ca/api"
+      }
+    },
+    "production": {
+      "autoIncrement": true,
+      "distribution": "store",
+      "ios": {
+        "simulator": false
+      },
+      "env": {
+        "EXPO_PUBLIC_AUTH_BASE_URL": "https://zxkbbj3pcy.us-east-1.awsapprunner.com/api",
+        "EXPO_PUBLIC_BACKEND_BASE_URL": "https://learn-be.tsin.ca/api"
+      }
+    }
+  },
+  "submit": {
+    "staging": {
+      "ios": {
+        "appleId": "t.ologun@tsin.ca",
+        "ascAppId": "6761072504",
+        "appleTeamId": "4CHKGHG3PZ"
+      }
+    },
+    "production": {
+      "ios": {
+        "appleId": "t.ologun@tsin.ca",
+        "ascAppId": "6761072504",
+        "appleTeamId": "4CHKGHG3PZ"
+      }
+    }
+  }
+}
+

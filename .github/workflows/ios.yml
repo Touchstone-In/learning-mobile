@@ -1,0 +1,208 @@
+name: iOS CI
+
+on:
+  push:
+    branches: [staging, main]
+    paths:
+      - "ios/**"
+      - ".github/workflows/ios.yml"
+  pull_request:
+    branches: [staging, main]
+    paths:
+      - "ios/**"
+      - ".github/workflows/ios.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ── Type Check & Tests ──────────────────────────────────────────────────────
+  typecheck-and-test:
+    name: Type Check & Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: ios
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: ios/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: TypeScript type check
+        run: npx tsc --noEmit
+
+      - name: Run tests
+        run: npm test -- --passWithNoTests --ci --forceExit
+        env:
+          CI: true
+
+      - name: Test report summary
+        if: always()
+        run: |
+          echo "## iOS Type Check & Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "**Node version:** $(node --version)" >> $GITHUB_STEP_SUMMARY
+          echo "**TypeScript:** $(npx tsc --version)" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ job.status }}" == "success" ]; then
+            echo "✅ Type check passed, all tests green" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ Type check or tests failed — review logs above" >> $GITHUB_STEP_SUMMARY
+          fi
+
+  # ── Staging → TestFlight (internal testing) ─────────────────────────────────
+  staging-release:
+    name: Build & Upload to TestFlight
+    needs: typecheck-and-test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/staging'
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    environment: staging
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: ios/package-lock.json
+
+      - name: Install dependencies
+        working-directory: ios
+        run: npm ci --legacy-peer-deps
+
+      - name: Install EAS CLI
+        run: npm install -g eas-cli
+
+      - name: Prepare TestFlight release notes
+        shell: bash
+        run: |
+          NOTES_FILE="distribution/whatsnew/whatsnew-en-US"
+
+          if [ -s "$NOTES_FILE" ]; then
+            NOTES_CONTENT=$(cat "$NOTES_FILE")
+          else
+            NOTES_CONTENT=$(git log -1 --pretty=%s)
+          fi
+
+          NOTES_CONTENT=$(printf '%s' "$NOTES_CONTENT" | tr '\n' ' ' | sed 's/[[:space:]]\+/ /g' | sed 's/^ //; s/ $//')
+          NOTES_CONTENT=${NOTES_CONTENT:0:4000}
+          printf '%s\n' "$NOTES_CONTENT" > "$NOTES_FILE"
+
+          echo "Prepared release notes:" >> $GITHUB_STEP_SUMMARY
+          echo "$NOTES_CONTENT" >> $GITHUB_STEP_SUMMARY
+
+      - name: Build staging IPA and upload to TestFlight
+        working-directory: ios
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          EXPO_APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.EXPO_APPLE_APP_SPECIFIC_PASSWORD }}
+        run: |
+          eas build \
+            --platform ios \
+            --profile staging \
+            --non-interactive \
+            --auto-submit
+
+      - name: Release summary
+        if: always()
+        run: |
+          echo "## iOS Staging Release Summary" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch:** staging" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Bundle ID:** com.touchstoneinstitute.learningcompanion" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ job.status }}" == "success" ]; then
+            echo "✅ IPA built and uploaded to **TestFlight** (internal testing)" >> $GITHUB_STEP_SUMMARY
+            echo "Internal testers will receive the update within ~30 minutes" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ Build or upload encountered issues — check EAS dashboard" >> $GITHUB_STEP_SUMMARY
+            echo "**EAS Dashboard:** https://expo.dev/accounts/tsin/projects/tsin-learning/builds" >> $GITHUB_STEP_SUMMARY
+          fi
+
+  # ── Production → App Store review ───────────────────────────────────────────
+  production-release:
+    name: Build & Submit to App Store
+    needs: typecheck-and-test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    environment: production
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: ios/package-lock.json
+
+      - name: Install dependencies
+        working-directory: ios
+        run: npm ci --legacy-peer-deps
+
+      - name: Install EAS CLI
+        run: npm install -g eas-cli
+
+      - name: Prepare App Store release notes
+        shell: bash
+        run: |
+          NOTES_FILE="distribution/whatsnew/whatsnew-en-US"
+
+          if [ -s "$NOTES_FILE" ]; then
+            NOTES_CONTENT=$(cat "$NOTES_FILE")
+          else
+            NOTES_CONTENT=$(git log -1 --pretty=%s)
+          fi
+
+          NOTES_CONTENT=$(printf '%s' "$NOTES_CONTENT" | tr '\n' ' ' | sed 's/[[:space:]]\+/ /g' | sed 's/^ //; s/ $//')
+          NOTES_CONTENT=${NOTES_CONTENT:0:4000}
+          printf '%s\n' "$NOTES_CONTENT" > "$NOTES_FILE"
+
+          echo "Prepared release notes:" >> $GITHUB_STEP_SUMMARY
+          echo "$NOTES_CONTENT" >> $GITHUB_STEP_SUMMARY
+
+      - name: Build production IPA and submit to App Store
+        working-directory: ios
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          EXPO_APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.EXPO_APPLE_APP_SPECIFIC_PASSWORD }}
+        run: |
+          eas build \
+            --platform ios \
+            --profile production \
+            --non-interactive \
+            --auto-submit
+
+      - name: Release summary
+        if: always()
+        run: |
+          echo "## iOS Production Release Summary" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch:** main" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Bundle ID:** com.touchstoneinstitute.learningcompanion" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ job.status }}" == "success" ]; then
+            echo "✅ IPA built and submitted to **App Store** for review" >> $GITHUB_STEP_SUMMARY
+            echo "Apple review typically takes 1–3 days. Monitor progress in App Store Connect." >> $GITHUB_STEP_SUMMARY
+            echo "**App Store Connect:** https://appstoreconnect.apple.com/apps/6761072504" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ Build or submission encountered issues — check EAS dashboard" >> $GITHUB_STEP_SUMMARY
+            echo "**EAS Dashboard:** https://expo.dev/accounts/tsin/projects/tsin-learning/builds" >> $GITHUB_STEP_SUMMARY
+          fi
+
