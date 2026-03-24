@@ -43,6 +43,13 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "d2739131-fc46-4ebb-bdee-0ce78447b022"
+      }
+    },
+    "owner": "tsincorpit"
   }
 }
