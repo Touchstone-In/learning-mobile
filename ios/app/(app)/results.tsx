@@ -117,7 +117,7 @@ function ResultRow({ result }: { result: LearnerResultSummary }) {
     : 'neutral' as const;
 
   return (
-    <View style={[styles.resultRow, { backgroundColor: theme.colors.surfaceContainerLow }]}>
+    <View style={[styles.resultRow, { backgroundColor: theme.colors.surfaceVariant }]}>
       <View style={styles.resultHeader}>
         <View style={{ flex: 1, marginRight: 8 }}>
           <Text variant="titleSmall" style={{ color: theme.colors.onSurface, fontWeight: '600' }}>

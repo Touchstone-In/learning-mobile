@@ -162,7 +162,7 @@ function WeekCard({ week }: { week: ScheduleWeek }) {
 function SessionRow({ day }: { day: ScheduleDay }) {
   const theme = useTheme();
   return (
-    <View style={[styles.sessionRow, { backgroundColor: theme.colors.surfaceContainerLow }]}>
+    <View style={[styles.sessionRow, { backgroundColor: theme.colors.surfaceVariant }]}>
       <Text variant="titleSmall" style={{ color: theme.colors.onSurface, fontWeight: '600' }}>
         {day.session.sessionName}
       </Text>

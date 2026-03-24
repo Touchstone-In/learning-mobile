@@ -29,7 +29,7 @@ interface GuidanceSectionCardProps {
 export function GuidanceSectionCard({ title, supportingText, children, action }: GuidanceSectionCardProps) {
   const theme = useTheme();
   return (
-    <Card style={[styles.card, { backgroundColor: theme.colors.surface }]} elevation={0} mode="outlined">
+    <Card style={[styles.card, { backgroundColor: theme.colors.surface }]} elevation={0} mode="elevated">
       <Card.Content style={styles.cardContent}>
         <View style={styles.cardHeader}>
           <View style={styles.cardHeaderText}>

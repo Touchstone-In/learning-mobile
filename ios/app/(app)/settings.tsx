@@ -194,7 +194,7 @@ function ToggleRow({
 function LinkRow({
   title, subtitle, icon, onPress,
 }: {
-  title: string; subtitle: string; icon: string; onPress: () => void;
+  title: string; subtitle: string; icon: React.ComponentProps<typeof MaterialCommunityIcons>['name']; onPress: () => void;
 }) {
   const theme = useTheme();
   return (
