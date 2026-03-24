@@ -45,7 +45,7 @@ android {
         }
         create("staging") {
             initWith(getByName("debug"))
-            isDebuggable = true
+            isDebuggable = false
             isMinifyEnabled = true
             isShrinkResources = true
             signingConfig = signingConfigs.getByName("release")

@@ -323,7 +323,6 @@ jobs:
           track: internal
           status: draft
           whatsNewDirectory: distribution/whatsnew
-          imageDirectory: distribution/play-store/listings
 
       - name: Upload to Play Store (internal testing) without debug symbols
         if: success() && steps.debug_symbols.outputs.found != 'true'
@@ -335,7 +334,6 @@ jobs:
           track: internal
           status: draft
           whatsNewDirectory: distribution/whatsnew
-          imageDirectory: distribution/play-store/listings
 
       - name: Release summary
         if: always()
