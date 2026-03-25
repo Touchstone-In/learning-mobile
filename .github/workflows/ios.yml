@@ -1,3 +1,4 @@
+# iOS CI/CD  EAS Build -> TestFlight (staging) / App Store (main) [cert 2026-03-25]
 name: iOS CI
 
 on:
