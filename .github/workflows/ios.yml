@@ -121,16 +121,20 @@ jobs:
         working-directory: ios
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          ASC_API_KEY_ID: ${{ secrets.EXPO_ASC_API_KEY_ID }}
+          ASC_API_ISSUER_ID: ${{ secrets.EXPO_ASC_API_ISSUER_ID }}
         run: |
           echo "${{ secrets.EXPO_ASC_API_KEY }}" > /tmp/asc-api-key.p8
+          jq --arg path "/tmp/asc-api-key.p8" \
+             --arg keyId "$ASC_API_KEY_ID" \
+             --arg issuerId "$ASC_API_ISSUER_ID" \
+             '.submit.staging.ios += {"ascApiKeyPath": $path, "ascApiKeyId": $keyId, "ascApiKeyIssuerId": $issuerId}' \
+             eas.json > /tmp/eas-patched.json && mv /tmp/eas-patched.json eas.json
           eas submit \
             --platform ios \
             --profile staging \
             --latest \
-            --non-interactive \
-            --apple-api-key-path /tmp/asc-api-key.p8 \
-            --apple-api-key-id ${{ secrets.EXPO_ASC_API_KEY_ID }} \
-            --apple-api-key-issuer-id ${{ secrets.EXPO_ASC_API_ISSUER_ID }}
+            --non-interactive
           rm -f /tmp/asc-api-key.p8
 
       - name: Release summary
@@ -207,16 +211,20 @@ jobs:
         working-directory: ios
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          ASC_API_KEY_ID: ${{ secrets.EXPO_ASC_API_KEY_ID }}
+          ASC_API_ISSUER_ID: ${{ secrets.EXPO_ASC_API_ISSUER_ID }}
         run: |
           echo "${{ secrets.EXPO_ASC_API_KEY }}" > /tmp/asc-api-key.p8
+          jq --arg path "/tmp/asc-api-key.p8" \
+             --arg keyId "$ASC_API_KEY_ID" \
+             --arg issuerId "$ASC_API_ISSUER_ID" \
+             '.submit.production.ios += {"ascApiKeyPath": $path, "ascApiKeyId": $keyId, "ascApiKeyIssuerId": $issuerId}' \
+             eas.json > /tmp/eas-patched.json && mv /tmp/eas-patched.json eas.json
           eas submit \
             --platform ios \
             --profile production \
             --latest \
-            --non-interactive \
-            --apple-api-key-path /tmp/asc-api-key.p8 \
-            --apple-api-key-id ${{ secrets.EXPO_ASC_API_KEY_ID }} \
-            --apple-api-key-issuer-id ${{ secrets.EXPO_ASC_API_ISSUER_ID }}
+            --non-interactive
           rm -f /tmp/asc-api-key.p8
 
       - name: Release summary
