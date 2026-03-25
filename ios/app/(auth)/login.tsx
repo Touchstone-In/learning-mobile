@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, StyleSheet, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { View, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, Image } from 'react-native';
 import { Text, TextInput, Button, useTheme, HelperText } from 'react-native-paper';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -48,9 +48,12 @@ export default function LoginScreen() {
         <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
           {/* Brand header */}
           <View style={styles.brandHeader}>
-            <View style={[styles.brandBadge, { backgroundColor: Colors.TsinNavy }]}>
-              <Text variant="headlineMedium" style={{ color: Colors.TsinLime, fontWeight: '700' }}>T</Text>
-            </View>
+            <Image
+              source={require('../../assets/tsin-logo.png')}
+              style={styles.logo}
+              resizeMode="contain"
+              accessibilityLabel="TSIN Learning Companion logo"
+            />
             <Text variant="headlineMedium" style={{ color: Colors.TsinNavy, fontWeight: '700', marginTop: 12 }}>
               TSIN Learning
             </Text>
@@ -119,7 +122,7 @@ const styles = StyleSheet.create({
   scroll: { flexGrow: 1, justifyContent: 'center', paddingHorizontal: 32, paddingVertical: 40 },
   center: { flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 32 },
   brandHeader: { alignItems: 'center', marginBottom: 40 },
-  brandBadge: { width: 72, height: 72, borderRadius: 36, justifyContent: 'center', alignItems: 'center' },
+  logo: { width: 120, height: 120 },
   accent: { height: 4, width: 80, borderRadius: 2, marginTop: 8 },
   form: { gap: 8 },
   input: { backgroundColor: 'transparent' },
