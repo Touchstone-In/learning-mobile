@@ -107,17 +107,31 @@ jobs:
           echo "Prepared release notes:" >> $GITHUB_STEP_SUMMARY
           echo "$NOTES_CONTENT" >> $GITHUB_STEP_SUMMARY
 
-      - name: Build staging IPA and upload to TestFlight
+      - name: Build staging IPA
         working-directory: ios
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-          EXPO_APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.EXPO_APPLE_APP_SPECIFIC_PASSWORD }}
         run: |
           eas build \
             --platform ios \
             --profile staging \
+            --non-interactive
+
+      - name: Submit staging build to TestFlight
+        working-directory: ios
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: |
+          echo "${{ secrets.EXPO_ASC_API_KEY }}" > /tmp/asc-api-key.p8
+          eas submit \
+            --platform ios \
+            --profile staging \
+            --latest \
             --non-interactive \
-            --auto-submit
+            --apple-api-key-path /tmp/asc-api-key.p8 \
+            --apple-api-key-id ${{ secrets.EXPO_ASC_API_KEY_ID }} \
+            --apple-api-key-issuer-id ${{ secrets.EXPO_ASC_API_ISSUER_ID }}
+          rm -f /tmp/asc-api-key.p8
 
       - name: Release summary
         if: always()
@@ -179,17 +193,31 @@ jobs:
           echo "Prepared release notes:" >> $GITHUB_STEP_SUMMARY
           echo "$NOTES_CONTENT" >> $GITHUB_STEP_SUMMARY
 
-      - name: Build production IPA and submit to App Store
+      - name: Build production IPA
         working-directory: ios
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-          EXPO_APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.EXPO_APPLE_APP_SPECIFIC_PASSWORD }}
         run: |
           eas build \
             --platform ios \
             --profile production \
+            --non-interactive
+
+      - name: Submit production build to App Store
+        working-directory: ios
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: |
+          echo "${{ secrets.EXPO_ASC_API_KEY }}" > /tmp/asc-api-key.p8
+          eas submit \
+            --platform ios \
+            --profile production \
+            --latest \
             --non-interactive \
-            --auto-submit
+            --apple-api-key-path /tmp/asc-api-key.p8 \
+            --apple-api-key-id ${{ secrets.EXPO_ASC_API_KEY_ID }} \
+            --apple-api-key-issuer-id ${{ secrets.EXPO_ASC_API_ISSUER_ID }}
+          rm -f /tmp/asc-api-key.p8
 
       - name: Release summary
         if: always()
