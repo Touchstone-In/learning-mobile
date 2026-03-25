@@ -227,6 +227,21 @@ jobs:
             --non-interactive
           rm -f /tmp/asc-api-key.p8
 
+      - name: Push App Store metadata
+        working-directory: ios
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          ASC_API_KEY_ID: ${{ secrets.EXPO_ASC_API_KEY_ID }}
+          ASC_API_ISSUER_ID: ${{ secrets.EXPO_ASC_API_ISSUER_ID }}
+        run: |
+          # Re-write the .p8 key (submit step cleaned it up)
+          echo "${{ secrets.EXPO_ASC_API_KEY }}" > /tmp/asc-api-key.p8
+          # eas.json is already patched with ascApiKey fields from the submit step
+          eas metadata:push \
+            --profile production \
+            --non-interactive
+          rm -f /tmp/asc-api-key.p8
+
       - name: Release summary
         if: always()
         run: |

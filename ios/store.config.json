@@ -1,0 +1,27 @@
+{
+  "configVersion": 0,
+  "apple": {
+    "copyright": "2024 Touchstone Institute",
+    "primaryLocale": "en-US",
+    "categories": ["EDUCATION"],
+    "info": {
+      "en-US": {
+        "title": "TSIN Learning",
+        "subtitle": "Training & Schedule Manager",
+        "description": "TSIN Learning Companion is the official mobile app for Touchstone Institute learners.\n\nStay on top of your training schedule, receive timely push notifications for upcoming sessions and orientation events, and track your learning progress — all from your phone.\n\nFEATURES\n• Personalized training schedule\n• Push notifications for schedule changes and session reminders\n• Track completed and upcoming sessions\n• Manage notification preferences\n• Secure login with your TSIN credentials",
+        "keywords": [
+          "learning",
+          "training",
+          "schedule",
+          "education",
+          "touchstone",
+          "notifications"
+        ],
+        "marketingUrl": "https://www.tsin.ca",
+        "supportUrl": "https://www.tsin.ca",
+        "privacyPolicyUrl": "https://www.tsin.ca/privacy-policy"
+      }
+    }
+  }
+}
+
