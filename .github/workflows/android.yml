@@ -324,6 +324,7 @@ jobs:
           track: internal
           status: draft
           whatsNewDirectory: distribution/whatsnew
+          imageDirectory: distribution/play-store/listings
 
       - name: Upload to Play Store (internal testing) without debug symbols
         if: success() && steps.debug_symbols.outputs.found != 'true'
@@ -335,87 +336,7 @@ jobs:
           track: internal
           status: draft
           whatsNewDirectory: distribution/whatsnew
-
-      - name: Upload screenshots to Play Store
-        if: success()
-        shell: bash
-        run: |
-          SCREENSHOT_DIR="distribution/play-store/listings/en-US/phoneScreenshots"
-          PNG_COUNT=$(find "$SCREENSHOT_DIR" -name "*.png" 2>/dev/null | wc -l)
-          if [ "$PNG_COUNT" -eq 0 ]; then
-            echo "No screenshots found in $SCREENSHOT_DIR — skipping screenshot upload"
-            exit 0
-          fi
-          echo "Found $PNG_COUNT screenshot(s) — uploading to Play Store..."
-
-          echo '${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}' > /tmp/service_account.json
-          pip install --quiet google-api-python-client google-auth pillow
-
-          python3 << 'PYEOF'
-          import os, glob, shutil, tempfile
-          from PIL import Image
-          from google.oauth2 import service_account
-          from googleapiclient.discovery import build
-          from googleapiclient.http import MediaFileUpload
-
-          PACKAGE_NAME = "com.touchstoneinstitute.learningcompanion"
-          SCREENSHOT_DIR = "distribution/play-store/listings/en-US/phoneScreenshots"
-          LOCALE = "en-US"
-          IMAGE_TYPE = "phoneScreenshots"
-          MAX_ASPECT_RATIO = 2.3
-
-          def comply(src_path, tmp_dir):
-              """Return a path to a Play-Store-compliant copy of the screenshot.
-              If the image already satisfies the 2.3 max aspect ratio it is
-              returned unchanged; otherwise it is centre-cropped to fit."""
-              img = Image.open(src_path)
-              w, h = img.size
-              max_h = int(w * MAX_ASPECT_RATIO)
-              if h <= max_h:
-                  return src_path
-              # Centre-crop vertically
-              top = (h - max_h) // 2
-              img = img.crop((0, top, w, top + max_h))
-              out = os.path.join(tmp_dir, os.path.basename(src_path))
-              img.save(out, format="PNG", optimize=True)
-              print(f"  Cropped {os.path.basename(src_path)}: {w}x{h} → {w}x{max_h}")
-              return out
-
-          creds = service_account.Credentials.from_service_account_file(
-              "/tmp/service_account.json",
-              scopes=["https://www.googleapis.com/auth/androidpublisher"]
-          )
-          service = build("androidpublisher", "v3", credentials=creds)
-
-          edit = service.edits().insert(packageName=PACKAGE_NAME, body={}).execute()
-          edit_id = edit["id"]
-          print(f"Created edit: {edit_id}")
-
-          service.edits().images().deleteall(
-              packageName=PACKAGE_NAME,
-              editId=edit_id,
-              language=LOCALE,
-              imageType=IMAGE_TYPE
-          ).execute()
-          print("Deleted existing screenshots")
-
-          screenshots = sorted(glob.glob(f"{SCREENSHOT_DIR}/*.png"))
-          with tempfile.TemporaryDirectory() as tmp_dir:
-              for path in screenshots:
-                  upload_path = comply(path, tmp_dir)
-                  media = MediaFileUpload(upload_path, mimetype="image/png")
-                  result = service.edits().images().upload(
-                      packageName=PACKAGE_NAME,
-                      editId=edit_id,
-                      language=LOCALE,
-                      imageType=IMAGE_TYPE,
-                      media_body=media
-                  ).execute()
-                  print(f"Uploaded: {os.path.basename(path)} -> {result['image']['id']}")
-
-          service.edits().commit(packageName=PACKAGE_NAME, editId=edit_id).execute()
-          print(f"Committed edit {edit_id} with {len(screenshots)} screenshot(s)")
-          PYEOF
+          imageDirectory: distribution/play-store/listings
 
       - name: Release summary
         if: always()
