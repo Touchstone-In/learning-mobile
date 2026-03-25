@@ -40,14 +40,12 @@
   "submit": {
     "staging": {
       "ios": {
-        "appleId": "t.ologun@tsin.ca",
         "ascAppId": "6761072504",
         "appleTeamId": "4CHKGHG3PZ"
       }
     },
     "production": {
       "ios": {
-        "appleId": "t.ologun@tsin.ca",
         "ascAppId": "6761072504",
         "appleTeamId": "4CHKGHG3PZ"
       }
