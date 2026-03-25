@@ -234,12 +234,13 @@ jobs:
 
       - name: Build staging AAB
         env:
-          VERSION_CODE: ${{ github.run_number }}
           KEYSTORE_FILE: ${{ github.workspace }}/app/release.keystore
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-        run: ./gradlew bundleStaging --stacktrace
+        run: |
+          export VERSION_CODE=$(( ${{ github.run_number }} + 31 ))
+          ./gradlew bundleStaging --stacktrace
 
       - name: Upload staging AAB artifact
         if: success()
@@ -477,12 +478,13 @@ jobs:
 
       - name: Build release AAB
         env:
-          VERSION_CODE: ${{ github.run_number }}
           KEYSTORE_FILE: ${{ github.workspace }}/app/release.keystore
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-        run: ./gradlew bundleRelease --stacktrace
+        run: |
+          export VERSION_CODE=$(( ${{ github.run_number }} + 31 ))
+          ./gradlew bundleRelease --stacktrace
 
       - name: Upload release AAB artifact
         if: success()
