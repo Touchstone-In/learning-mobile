@@ -18,9 +18,9 @@ export const mobileApi = {
     backendClient.get<LearnerResultsResponse>('/mobile/me/results').then((r) => r.data),
 
   getPreferences: (): Promise<NotificationPreferencesResponse> =>
-    backendClient.get<NotificationPreferencesResponse>('/mobile/me/preferences').then((r) => r.data),
+    backendClient.get<NotificationPreferencesResponse>('/mobile/preferences').then((r) => r.data),
 
   updatePreferences: (data: UpdatePreferencesRequest): Promise<NotificationPreferencesResponse> =>
-    backendClient.patch<NotificationPreferencesResponse>('/mobile/me/preferences', data).then((r) => r.data),
+    backendClient.patch<NotificationPreferencesResponse>('/mobile/preferences', data).then((r) => r.data),
 };
 
